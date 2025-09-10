@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Actu Sûre Express - L'info en continu</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="assets/images/favicon.png" />
+</head>
+
+<!-- Faux certificat d'abonnement -->
+<div class="fake-popup hidden" id="fakePopup">
+  <div class="popup-content">
+    <h2>🎁 Offre exclusive -70% 🎁</h2>
+    <p>Abonnez-vous aujourd’hui et recevez un <strong>certificat premium</strong> !</p>
+    <p class="price">Seulement <strong>4 € / mois</strong></p>
+    
+    <form>
+      <label for="prenom">Prénom</label>
+      <input type="text" id="prenom" placeholder="Votre prénom" required />
+
+      <label for="nom">Nom</label>
+      <input type="text" id="nom" placeholder="Votre nom" required />
+
+      <label for="cb">Numéro de carte</label>
+      <input type="text" id="cb" placeholder="1234 5678 9012 3456" maxlength="19" required />
+
+      <label for="titulaire">Nom du titulaire</label>
+      <input type="text" id="titulaire" placeholder="Comme indiqué sur la carte" required />
+
+      <div class="card-details">
+        <div>
+          <label for="exp">Date d’expiration</label>
+          <input type="text" id="exp" placeholder="MM/AA" maxlength="5" required />
+        </div>
+        <div>
+          <label for="ccv">CCV</label>
+          <input type="text" id="ccv" placeholder="123" maxlength="3" required />
+        </div>
+      </div>
+
+      <button type="submit" class="btn primary">Valider l'abonnement</button>
+    </form>
+    <button class="btn ghost" id="closePopup">❌ Fermer</button>
+  </div>
+</div>
+
+
+
+
+<body>
+  <!-- Bouton notices -->
+  <button id="toggleNoticeBtn">Cacher bandeaux</button>
+
+  <!-- Bandeau rubriques -->
+  <header class="site-header">
+    <div class="container logo-bar">
+      <img src="assets/images/logo-actu-sure.png" alt="Logo Actu Sûre Express" class="logo-img" />
+      <div class="logo">Actu <span class="accent">Sûre</span> Express</div>
+    </div>
+    <nav class="navbar">
+  <ul>
+    <li><a href="../index.html">International</a></li>
+    <li><a href="../index.html">Politique</a></li>
+    <li><a href="../index.html">Société</a></li>
+    <li><a href="../index.html">Économie</a></li>
+    <li><a href="../index.html">Sciences</a></li>
+    <li><a href="../index.html">Culture</a></li>
+    <li><a href="../index.html">Opinions</a></li>
+  </ul>
+</nav>
+
+    <div class="en-ce-moment">
+      <span class="label">En ce moment</span>
+      <a href="articles/boisson.html">Boisson miracle</a> ·
+      <a href="articles/lune-verte.html">Lune verte</a> ·
+      <a href="articles/ville-smartphone.html">Smartphones bannis</a>
+    </div>
+  </header>
+
+  <!-- Breaking News -->
+  <div class="breaking-news">
+    <div class="ticker" id="ticker">
+      <span>⚡ URGENT : Une boisson rendrait les ados 3× plus intelligents</span>
+      <span>🌍 Monde : Une ville interdit tous les smartphones</span>
+      <span>🌙 Sciences : La Lune deviendrait verte en 2026</span>
+      <span>🤖 Tech : Une IA prédit la prochaine catastrophe mondiale</span>
+    </div>
+  </div>
+
+  <!-- Contenu principal -->
+  <main class="container layout">
+    <!-- Colonne principale -->
+    <div class="main-content">
+      <!-- Article principal -->
+      <section class="lead annot" data-annotation="Titre sensationnaliste, image sans source">
+        <article>
+          <a href="articles/boisson.html">
+            <img src="assets/images/hyperbrainz-boisson.png" alt="Canette HyperBrainZ posée sur une table" />
+            <h1>« Une boisson rendrait les ados 3× plus intelligents », selon une étude choc</h1>
+          </a>
+          <p class="meta">Par <strong>Dr. J. Vérité</strong> | 12 octobre 2026</p>
+          <p>
+            Une étude exclusive menée par l'Institut Global des Neurosciences Appliquées™ sur <strong>87 %</strong> des adolescents
+            montre une augmentation spectaculaire du QI après consommation de <em>HyperBrainZ</em>.
+            <a href="#" class="source-link" data-dead-source>Voir la source</a>
+          </p>
+          <div class="flag">⚠️ Indices : date incohérente, chiffre invérifiable, lien mort</div>
+        </article>
+      </section>
+
+      <!-- Articles secondaires -->
+      <section class="grid">
+        <article class="card annot" data-annotation="Chiffres trop parfaits">
+          <a href="articles/ville-smartphone.html">
+            <img src="assets/images/ville-sans-smartphone.png" alt="Panneau d’interdiction de smartphone sur une place de ville" />
+            <h2>Une ville française interdit les smartphones partout</h2>
+          </a>
+          <p>Le maire affirme que <strong>100 %</strong> des habitants approuvent.
+            <a href="#" class="source-link" data-dead-source>Étude PDF</a>
+          </p>
+          <div class="flag">⚠️ Étude introuvable, chiffres douteux</div>
+        </article>
+
+        <article class="card annot" data-annotation="Conditionnel flou">
+          <a href="articles/ia-catastrophe.html">
+            <img src="assets/images/ia-catastrophe.png" alt="Silhouette devant un écran rempli de code et graphiques rouges" />
+            <h2>Une IA aurait prédit la prochaine catastrophe mondiale</h2>
+          </a>
+          <p>Des experts anonymes parlent d'une « précision absolue ».
+            <a href="#" class="source-link" data-dead-source>Rapport exclusif</a>
+          </p>
+          <div class="flag">⚠️ Source invérifiable</div>
+        </article>
+
+        <!-- Article réservé aux abonnés -->
+        <article class="card abonnes">
+          <a href="articles/coulisses-hyperbrainz.html">
+            <img src="assets/images/coulisses-hyperbrainz.png" alt="Laboratoire avec flacons fluorescents" />
+            <h2>Les coulisses de la boisson HyperBrainZ</h2>
+          </a>
+          <p>Découvrez pourquoi certains chercheurs mettent en garde contre cette prétendue « potion miracle »...</p>
+          <div class="paywall">
+            <p>🔒 Cet article est réservé aux abonnés</p>
+            <button class="btn subscribe">S’abonner</button>
+          </div>
+        </article>
+
+        <article class="card annot" data-annotation="URL suspecte">
+          <a href="articles/vaccination.html">
+            <img src="assets/images/vaccination-fake.png" alt="Seringue et vaccin posés sur un clavier d’ordinateur" />
+            <h2>Vacc1nation : une découverte renvErse le débat</h2>
+          </a>
+          <p>L'Observatoire Europé1n confirme : tous les doutes s'effondrent.
+            <a href="#" class="source-link" data-dead-source>observatoire-europ1en.info</a>
+          </p>
+          <div class="flag">⚠️ URL imitant un vrai média</div>
+        </article>
+      </section>
+
+      <!-- Lune verte -->
+      <section class="grid">
+        <article class="card annot" data-annotation="Photo retouchée, source NASA non vérifiable">
+          <a href="articles/lune-verte.html">
+            <img src="assets/images/lune-verte.png" alt="Photo de la Lune modifiée en vert" />
+            <h2>La Lune deviendrait verte en 2026 selon une fuite</h2>
+          </a>
+          <p>Une « fuite » interne annoncerait un changement de couleur spectaculaire de la Lune.
+            <a href="#" class="source-link" data-dead-source>Source interne</a>
+          </p>
+          <div class="flag">⚠️ Photo retouchée, autorité usurpée</div>
+        </article>
+      </section>
+
+      <!-- Notice pédagogique -->
+      <section class="notice">
+        <strong>But pédagogique :</strong> Ce site imite un vrai journal mais contient uniquement de fausses informations.
+        Utilisez <em>Révéler les indices</em> pour voir les drapeaux d’alerte et testez le <em>Quiz</em>.
+      </section>
+
+      <!-- Boutons d'interaction -->
+      <div class="actions">
+        <button id="revealBtn" class="btn primary">Révéler les indices 🔎</button>
+
+      </div>
+
+      <!-- Quiz -->
+      <section class="quiz" id="quiz" hidden>
+        <h2>🧠 Quiz Vrai/Faux</h2>
+        <p>Score : <span id="score">0</span>/2</p>
+
+        <div class="q-card" data-answer="f">
+          <strong>Un lien “Voir la source” suffit à prouver la fiabilité d’un article.</strong>
+          <div class="choices">
+            <button class="chip" data-choice="v">Vrai</button>
+            <button class="chip" data-choice="f">Faux</button>
+          </div>
+          <div class="explain" hidden>Un lien peut être mort ou secondaire.</div>
+        </div>
+
+        <div class="q-card" data-answer="v">
+          <strong>Une URL qui imite un média connu est suspecte.</strong>
+          <div class="choices">
+            <button class="chip" data-choice="v">Vrai</button>
+            <button class="chip" data-choice="f">Faux</button>
+          </div>
+          <div class="explain" hidden>C’est une technique classique d’usurpation.</div>
+        </div>
+
+        <button id="retryQuiz" class="btn">Recommencer</button>
+      </section>
+    </div>
+
+    <!-- Colonne pub -->
+    <aside class="sidebar">
+      <div class="fake-ad" id="carAdSlot">
+        <img id="carAdImage" src="assets/images/pub-voiture-electrique.png" alt="Publicité automobile" />
+        <p id="carAdText">NovaCar E-Drive – L’avenir est déjà là ⚡</p>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      © 2025 — « Actu Sûre Express ». Prototype pédagogique Cybermois.
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
