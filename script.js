@@ -62,13 +62,16 @@ attachQuiz();
 
 
 // --- Pub voiture dynamique avec fondu ---
+// Détecte si on est dans une sous-page (articles/)
+const basePath = window.location.pathname.includes("/articles/") ? "../" : "";
+
 const carAds = [
   {
-    img: "assets/images/pub-voiture-electrique.png",
+    img: basePath + "assets/images/pub-voiture-electrique.png",
     text: "NovaCar E-Drive – L’avenir est déjà là ⚡"
   },
   {
-    img: "assets/images/pub-suv-familial.png",
+    img: basePath + "assets/images/pub-suv-familial.png",
     text: "RoadMaster X – L’espace et la sécurité avant tout 🚙"
   }
 ];
@@ -93,7 +96,7 @@ function rotateCarAd() {
     carAdImage.classList.remove("fade-out");
     carAdImage.classList.add("fade-in");
 
-    // nettoyer la classe fade-in après l’animation (1s = durée CSS)
+    // nettoyer la classe fade-in après l’animation
     setTimeout(() => carAdImage.classList.remove("fade-in"), 1000);
   }, 1000); // durée du fondu sortant
 }
@@ -101,7 +104,7 @@ function rotateCarAd() {
 setInterval(rotateCarAd, 5000); // pub change toutes les 5s
 
 
-// --- Toggle notices & bouton indices ---
+// --- Toggle notices ---
 const toggleNoticeBtn = document.getElementById("toggleNoticeBtn");
 let noticesVisible = false; // masqués par défaut
 
@@ -109,12 +112,6 @@ function updateNotices() {
   document.querySelectorAll(".notice").forEach(notice => {
     notice.classList.toggle("hidden", !noticesVisible);
   });
-
-  // masquer aussi le bouton "Révéler les indices" si les notices sont cachées
-  const revealBtn = document.getElementById("revealBtn");
-  if (revealBtn) {
-    revealBtn.classList.toggle("hidden", !noticesVisible);
-  }
 
   if (toggleNoticeBtn) {
     toggleNoticeBtn.textContent = noticesVisible 
@@ -132,6 +129,7 @@ if (toggleNoticeBtn) {
     updateNotices();
   });
 }
+
 
 // --- Popup abonnement factice ---
 const fakePopup = document.getElementById("fakePopup");
@@ -158,3 +156,4 @@ if (fakeForm) {
     fakePopup.classList.add("hidden");
   });
 }
+
