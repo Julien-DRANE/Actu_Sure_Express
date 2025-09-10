@@ -131,6 +131,7 @@ if (toggleNoticeBtn) {
 }
 
 
+
 // --- Popup abonnement factice ---
 const fakePopup = document.getElementById("fakePopup");
 const closePopup = document.getElementById("closePopup");
@@ -156,4 +157,5 @@ if (fakeForm) {
     fakePopup.classList.add("hidden");
   });
 }
+
 
