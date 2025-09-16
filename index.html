@@ -513,14 +513,51 @@
       });
     }
 
-    /* ----- Overlay “Outil d’analyse” ----- */
+    /* ----- Overlay “Outil d’analyse” + Camembert lazy-init ----- */
     const quizBtn = document.getElementById('quizBtn');
     const eduOverlay = document.getElementById('eduOverlay');
     const eduOverlayClose = document.getElementById('eduOverlayClose');
 
-    quizBtn?.addEventListener('click', () => eduOverlay?.classList.remove('hidden'));
+    let trapChart; // instance Chart.js
+    function buildMiniTrapChart() {
+      const ctx = document.getElementById('miniTrapChart');
+      if (!ctx || !window.Chart) return;
+
+      if (trapChart) { // déjà créé → on redimensionne au besoin
+        try { trapChart.resize(); } catch {}
+        return;
+      }
+      trapChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Titre choc','Source floue','Image manipulée','Vocabulaire biaisé'],
+          datasets: [{
+            data: [3, 2, 1, 2], // exemple
+            backgroundColor: ['#f59e0b','#3b82f6','#ef4444','#10b981'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: { legend: { display: true, position: 'bottom' } },
+          cutout: '55%'
+        }
+      });
+    }
+
+    // Ouvrir l’overlay et construire le graphe juste après l’affichage
+    quizBtn?.addEventListener('click', () => {
+      eduOverlay?.classList.remove('hidden');
+      requestAnimationFrame(() => requestAnimationFrame(buildMiniTrapChart));
+    });
     eduOverlayClose?.addEventListener('click', () => eduOverlay?.classList.add('hidden'));
     eduOverlay?.addEventListener('click', (e) => { if (e.target === eduOverlay) eduOverlay.classList.add('hidden'); });
+
+    // Si jamais l’overlay est visible au chargement (cas rare), on initialise aussi :
+    if (!eduOverlay?.classList.contains('hidden')) {
+      requestAnimationFrame(() => requestAnimationFrame(buildMiniTrapChart));
+    }
 
     /* ----- Révéler les indices (badges sur les cartes) ----- */
     const revealBtn = document.getElementById('revealBtn');
@@ -557,7 +594,6 @@
     updateNotices();
 
     /* ----- Mini quiz in-page ----- */
-    const quiz = document.getElementById("quiz");
     const scoreEl = document.getElementById("score");
     let score = 0;
 
@@ -636,7 +672,6 @@
       document.querySelectorAll('#eduQuizQuestions [data-exp]').forEach(p => p.classList.add('hidden'));
       quizPage = 0; showQuizPage(quizPage);
     });
-    quizBtn?.addEventListener('click', () => { updateTotal(); showQuizPage(quizPage); });
 
     /* ----- Popup abonnement factice ----- */
     const fakePopup = document.getElementById("fakePopup");
