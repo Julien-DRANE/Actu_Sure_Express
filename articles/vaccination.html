@@ -1,101 +1,189 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Vacc1nation : une découverte renvErse le débat</title>
-  <link rel="stylesheet" href="../style.css">
+
+  <!-- Tailwind & libs -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- Favicon (depuis /articles/) -->
   <link rel="icon" type="image/png" href="../assets/images/favicon.png" />
+
+  <style>
+    body { font-family: 'Roboto', sans-serif; background-color: #f8f9fa; }
+    h1, h2, h3 { font-family: 'Playfair Display', serif; }
+    /* Bandeau breaking news (comme l’index) */
+    .breaking-news { background: #dc2626; color: white; overflow: hidden; position: relative; }
+    .ticker { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 25s linear infinite; }
+    .ticker span { margin: 0 2rem; }
+    @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+  </style>
 </head>
-<body>
-  <button id="toggleNoticeBtn">Cacher bandeaux</button>
+<body class="bg-gray-50">
 
-  <header class="site-header">
-    <div class="container logo-bar">
-      <a href="../index.html">
-        <img src="../assets/images/logo-actu-sure.png" alt="Logo Actu Sûre Express" class="logo-img" />
-      </a>
-      <div class="logo">
-        <a href="../index.html" style="text-decoration:none; color:inherit;">Actu <span class="accent">Sûre</span> Express</a>
+  <!-- ===== Header identique à l’index : logo gros à gauche, recherche + nav à droite ===== -->
+  <header class="pt-8 pb-6 bg-gradient-to-r from-blue-800 to-blue-600 text-white">
+    <div class="container mx-auto px-4">
+      <div class="grid md:grid-cols-3 gap-6 items-center">
+        <!-- Logo GROS à gauche -->
+        <div class="md:col-span-1 flex md:justify-start justify-center">
+          <a href="../index.html" class="block" aria-label="Retour à l’accueil">
+            <img src="../assets/images/logo-actu-sure.png" alt="Logo Actu Sûre Express" class="h-24 md:h-32 w-auto">
+          </a>
+        </div>
+
+        <!-- Recherche + nav + tagline à droite -->
+        <div class="md:col-span-2 text-center md:text-left">
+          <!-- Tagline (typographie soignée) -->
+          <p class="mb-4 md:mb-6">
+            <span class="block text-2xl md:text-3xl leading-snug text-white/95 tracking-wide italic drop-shadow-sm"
+                  style="font-family:'Playfair Display', serif;">
+              L’information fiable et rapide
+            </span>
+          </p>
+
+          <!-- Barre de recherche -->
+          <div class="max-w-2xl md:max-w-3xl md:ml-0 mx-auto relative">
+            <input type="text" placeholder="Rechercher des articles..." class="w-full py-3 px-6 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-200">
+            <button class="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-700 text-white p-2 rounded-full hover:bg-blue-800" aria-label="Rechercher">
+              <i data-feather="search"></i>
+            </button>
+          </div>
+
+          <!-- Navigation sous la recherche -->
+          <nav class="mt-6">
+            <div class="hidden md:flex flex-wrap md:justify-start justify-center gap-3 text-white/90">
+              <a href="../index.html" class="px-3 py-1 rounded hover:bg-white/10">International</a>
+              <a href="../index.html" class="px-3 py-1 rounded hover:bg-white/10">Politique</a>
+              <a href="../index.html" class="px-3 py-1 rounded hover:bg-white/10">Économie</a>
+              <a href="../index.html" class="px-3 py-1 rounded hover:bg-white/10">Sciences</a>
+              <a href="../index.html" class="px-3 py-1 rounded hover:bg-white/10">Culture</a>
+            </div>
+
+            <!-- Menu mobile -->
+            <div class="md:hidden mt-4">
+              <button id="menu-toggle" class="inline-flex items-center gap-2 px-3 py-1 rounded bg-white/20 hover:bg-white/30">
+                <i data-feather="menu"></i><span>Menu</span>
+              </button>
+              <div id="mobile-menu" class="hidden bg-white/10 rounded mt-2 p-2">
+                <a href="../index.html" class="block px-3 py-2 rounded hover:bg-white/20">International</a>
+                <a href="../index.html" class="block px-3 py-2 rounded hover:bg-white/20">Politique</a>
+                <a href="../index.html" class="block px-3 py-2 rounded hover:bg-white/20">Économie</a>
+                <a href="../index.html" class="block px-3 py-2 rounded hover:bg-white/20">Sciences</a>
+                <a href="../index.html" class="block px-3 py-2 rounded hover:bg-white/20">Culture</a>
+              </div>
+            </div>
+          </nav>
+        </div>
       </div>
-    </div>
-    <nav class="navbar">
-  <ul>
-    <li><a href="../index.html">International</a></li>
-    <li><a href="../index.html">Politique</a></li>
-    <li><a href="../index.html">Société</a></li>
-    <li><a href="../index.html">Économie</a></li>
-    <li><a href="../index.html">Sciences</a></li>
-    <li><a href="../index.html">Culture</a></li>
-    <li><a href="../index.html">Opinions</a></li>
-  </ul>
-</nav>
-
-    <div class="en-ce-moment">
-      <span class="label">En ce moment</span>
-      <a href="boisson.html">Boisson miracle</a> ·
-      <a href="lune-verte.html">Lune verte</a> ·
-      <a href="ville-smartphone.html">Smartphones bannis</a>
     </div>
   </header>
 
+  <!-- ===== Breaking news sous la recherche ===== -->
   <div class="breaking-news">
     <div class="ticker">
-      <span>⚡ URGENT : Une boisson rendrait les ados 3× plus intelligents</span>
-      <span>🌍 Monde : Une ville interdit tous les smartphones</span>
-      <span>🌙 Sciences : La Lune deviendrait verte en 2026</span>
-      <span>🤖 Tech : Une IA prédit la prochaine catastrophe mondiale</span>
+      <span>⚡ URGENT : Une pluie de spaghettis annoncée dans le sud de la France</span>
+      <span>🛸 Insolite : Des moutons alignés en cercle intriguent les astronomes</span>
+      <span>🌋 Monde : Un volcan aurait chanté du Céline Dion avant d’entrer en éruption</span>
+      <span>🐙 Océan : Une pieuvre géante aperçue en train de jongler avec des bouées</span>
     </div>
   </div>
 
-  <main class="container layout">
-    <div class="main-content article-page">
+  <!-- ===== Contenu principal ===== -->
+  <main class="container mx-auto px-4 pt-12 pb-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Article -->
+    <div class="lg:col-span-2 bg-white rounded-lg shadow-md p-6">
       <article>
-        <h1>Vacc1nation : une découverte renvErse le débat</h1>
-        <p class="meta">Par <strong>Marc Dubreuil</strong> | 4 octobre 2026</p>
-        <img src="../assets/images/vaccination-fake.png" alt="Seringue et vaccin posés sur un clavier d’ordinateur" />
+        <h1 class="text-3xl md:text-4xl font-bold mb-4">Vacc1nation : une découverte renvErse le débat</h1>
+        <p class="text-gray-500 mb-6">Par <strong>Marc Dubreuil</strong> | 4 octobre 2026</p>
 
-        <p>
-          Une étude publiée par l’<strong>Observatoire Europé1n</strong> prétend démontrer que 
-          les doutes persistants autour de la vaccination appartiendraient désormais au passé. 
-          Le rapport, diffusé via le site <a href="#">observatoire-europ1en.info</a>, 
-          assure que « toutes les interrogations ont été levées ».
-        </p>
-        <p>
-          Le document, pourtant non signé, évoque des « preuves irréfutables » sans donner de détails méthodologiques. 
-          Les graphiques présentés utilisent des échelles non standardisées et aucune donnée brute n’est fournie.
-        </p>
-        <p>
-          Le Pr. <strong>Giovanni Rizzo</strong>, épidémiologiste à Milan, s’interroge : 
-          « Je n’ai jamais entendu parler de cet Observatoire. Le site est hébergé en dehors de l’Union européenne, 
-          avec un nom de domaine qui imite un site officiel, mais qui ne l’est pas. »
-        </p>
-        <p>
-          Sur les réseaux sociaux, la publication est massivement partagée dans des groupes antivax, 
-          présentée comme « la preuve que la vérité sort enfin ».  
-          Certains médias locaux ont repris l’information sans vérification.
+        <img src="../assets/images/vaccination-fake.png"
+             alt="Seringue et vaccin posés sur un clavier d’ordinateur"
+             class="w-full max-w-2xl mx-auto rounded-lg mb-6"
+             loading="lazy" decoding="async" width="960" height="540">
+
+        <!-- Version humoristique, dédramatisante, non promotionnelle -->
+        <p class="mb-4">
+          Une institution au nom très sérieux, l’<strong>Observatoire Europé1n</strong> (oui, avec un <em>1</em> comme dans un mot de passe),
+          affirme avoir « définitivement clos » le débat sur la vaccination. Spoiler&nbsp;: non.
         </p>
 
-        <div class="notice">
+        <p class="mb-4">
+          Le fameux rapport, publié sur <em>observatoire-europ1en.info</em>, déroule des « preuves irréfutables » sous forme de graphiques
+          qui ressemblent à une partie de Tetris jouée à 3&nbsp;h du matin. Méthodologie&nbsp;? Échantillon&nbsp;? Données brutes&nbsp;?
+          Visiblement en vacances prolongées.
+        </p>
+
+        <p class="mb-4">
+          Interrogé par nos soins, le Pr. <strong>Giovanni Rizzo</strong> lève un sourcil&nbsp;: « Je ne connais pas cet observatoire,
+          et leur nom de domaine a autant d’allure officielle qu’un “.coolstory”. » Ambiance.
+        </p>
+
+        <p class="mb-4">
+          Sur les réseaux, le rapport tourne déjà à vitesse grand V&nbsp;: certains y voient « la vérité qui éclate »,
+          d’autres un PDF qui s’éclate, nuance subtile. Entre les captures d’écran floues et les partages en cascade,
+          on finit par perdre de vue la question la plus simple&nbsp;: <em>quelle est la source primaire vérifiable&nbsp;?</em>
+        </p>
+
+        <p class="mb-4">
+          Moralité (sans drame, promis)&nbsp;: avant d’embrasser une conclusion « définitive », on respire, on vérifie,
+          on cherche la méthode et on garde son esprit critique bien hydraté. Pas besoin d’être « pour » ou « contre » quoi que ce soit
+          pour exiger des infos claires et vérifiables.
+        </p>
+
+        <!-- DISCLAIMER (caché par défaut, bouton “?” en bas à droite pour l’afficher) -->
+        <div class="notice hidden bg-yellow-50 border border-yellow-200 text-yellow-800 p-4 rounded mt-6">
           ⚠️ <strong>Attention :</strong> Cet article est fictif.  
-          Les organismes et citations sont inventés pour illustrer la propagation de fausses informations.
+          Les organismes et citations sont inventés pour illustrer la circulation d’informations douteuses.
         </div>
       </article>
     </div>
 
-    <aside class="sidebar">
-      <div class="fake-ad" id="carAdSlot">
-        <img id="carAdImage" src="../assets/images/pub-voiture-electrique.png" alt="Publicité automobile" />
-        <p id="carAdText">NovaCar E-Drive – L’avenir est déjà là ⚡</p>
+    <!-- Pub (rotation gérée par ../script.js si présent) -->
+    <aside>
+      <div id="carAdSlot" class="bg-white shadow-md rounded-lg p-4 text-center">
+        <img id="carAdImage" src="../assets/images/pub-voiture-electrique.png" alt="Publicité voiture" class="mx-auto mb-2">
+        <p id="carAdText" class="text-sm text-gray-600">NovaCar E-Drive – L’avenir est déjà là ⚡</p>
       </div>
     </aside>
   </main>
 
-  <footer class="site-footer">
-    <div class="container">
-      © 2025 — « Actu Sûre Express ». Prototype pédagogique Cybermois.
+  <!-- ===== Footer ===== -->
+  <footer class="bg-gray-800 text-white py-12">
+    <div class="container mx-auto px-4 text-center">
+      © 2025 — Actu Sûre Express. Prototype pédagogique Cybermois.
     </div>
   </footer>
 
+  <!-- Bouton discret en bas à droite pour afficher/masquer le disclaimer -->
+  <button id="eduMiniToggle"
+          class="fixed bottom-6 right-6 z-50 w-10 h-10 flex items-center justify-center
+                 rounded-full bg-white/80 backdrop-blur-md border border-gray-300 text-gray-800 shadow
+                 hover:bg-white"
+          title="Afficher/masquer le disclaimer">?</button>
+
+  <!-- Script global (rotation pubs, popup, etc. si utilisé sur votre site) -->
   <script src="../script.js"></script>
+  <script>
+    // Menu mobile
+    document.getElementById('menu-toggle')?.addEventListener('click', () => {
+      document.getElementById('mobile-menu')?.classList.toggle('hidden');
+    });
+
+    // Feather & AOS
+    feather.replace();
+    AOS.init();
+
+    // Bouton ? pour afficher/masquer le disclaimer
+    document.getElementById('eduMiniToggle')?.addEventListener('click', () => {
+      document.querySelectorAll('.notice').forEach(n => n.classList.toggle('hidden'));
+    });
+  </script>
 </body>
 </html>

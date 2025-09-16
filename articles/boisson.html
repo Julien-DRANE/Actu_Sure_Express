@@ -3,123 +3,132 @@
 <head>
   <meta charset="UTF-8">
   <title>HyperBrainZ : la boisson miracle ?</title>
-  <link rel="stylesheet" href="../style.css">
-  <link rel="icon" type="image/png" href="../assets/images/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Roboto', sans-serif; background-color: #f8f9fa; }
+    h1, h2, h3 { font-family: 'Playfair Display', serif; }
+    .navbar { backdrop-filter: blur(10px); }
+    .breaking-news { background: #dc2626; color: white; overflow: hidden; position: relative; }
+    .ticker { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 25s linear infinite; }
+    .ticker span { margin: 0 2rem; }
+    @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+  </style>
 </head>
-<body>
-  <!-- Bouton notices -->
-  <button id="toggleNoticeBtn">Cacher bandeaux</button>
+<body class="bg-gray-50">
 
-  <!-- Header -->
-  <header class="site-header">
-    <div class="container logo-bar">
-      <a href="../index.html">
-        <img src="../assets/images/logo-actu-sure.png" alt="Logo Actu Sûre Express" class="logo-img" />
-      </a>
-      <div class="logo">
-        <a href="../index.html" style="text-decoration:none; color:inherit;">Actu <span class="accent">Sûre</span> Express</a>
+  <!-- Navbar -->
+  <nav class="navbar fixed w-full bg-white bg-opacity-90 shadow-sm z-50">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <a href="../index.html" class="text-2xl font-bold text-blue-800">Actu Sûre Express</a>
+      <div class="hidden md:flex space-x-6">
+        <a href="../index.html" class="text-gray-700 hover:text-blue-600">International</a>
+        <a href="../index.html" class="text-gray-700 hover:text-blue-600">Politique</a>
+        <a href="../index.html" class="text-gray-700 hover:text-blue-600">Économie</a>
+        <a href="../index.html" class="text-gray-700 hover:text-blue-600">Sciences</a>
+        <a href="../index.html" class="text-gray-700 hover:text-blue-600">Culture</a>
       </div>
+      <button class="md:hidden focus:outline-none" id="menu-toggle" aria-label="Ouvrir le menu"><i data-feather="menu"></i></button>
     </div>
-    <nav class="navbar">
-  <ul>
-    <li><a href="../index.html">International</a></li>
-    <li><a href="../index.html">Politique</a></li>
-    <li><a href="../index.html">Société</a></li>
-    <li><a href="../index.html">Économie</a></li>
-    <li><a href="../index.html">Sciences</a></li>
-    <li><a href="../index.html">Culture</a></li>
-    <li><a href="../index.html">Opinions</a></li>
-  </ul>
-</nav>
+    <div class="md:hidden hidden bg-white w-full py-2 px-4 shadow-md" id="mobile-menu">
+      <a href="../index.html" class="block py-2 text-gray-700 hover:text-blue-600">International</a>
+      <a href="../index.html" class="block py-2 text-gray-700 hover:text-blue-600">Politique</a>
+      <a href="../index.html" class="block py-2 text-gray-700 hover:text-blue-600">Économie</a>
+      <a href="../index.html" class="block py-2 text-gray-700 hover:text-blue-600">Sciences</a>
+      <a href="../index.html" class="block py-2 text-gray-700 hover:text-blue-600">Culture</a>
+    </div>
+  </nav>
 
-    <div class="en-ce-moment">
-      <span class="label">En ce moment</span>
-      <a href="boisson.html">Boisson miracle</a> ·
-      <a href="lune-verte.html">Lune verte</a> ·
-      <a href="ville-smartphone.html">Smartphones bannis</a>
+  <!-- Hero -->
+  <header class="pt-24 pb-8 bg-gradient-to-r from-blue-800 to-blue-600 text-white text-center">
+    <h1 class="text-4xl md:text-5xl font-bold mb-2">HyperBrainZ : la boisson miracle ?</h1>
+    <p class="text-gray-200">Publié le 12 octobre 2026 — Par Dr. J. Vérité</p>
+
+    <!-- Barre de recherche -->
+    <div class="max-w-2xl mx-auto relative mt-6">
+      <input type="text" placeholder="Rechercher des articles..." class="w-full py-3 px-6 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <button class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-700 text-white p-2 rounded-full hover:bg-blue-800" aria-label="Rechercher">
+        <i data-feather="search"></i>
+      </button>
     </div>
   </header>
 
-  <!-- Breaking News -->
+  <!-- Breaking news -->
   <div class="breaking-news">
     <div class="ticker">
-      <span>⚡ URGENT : Une boisson rendrait les ados 3× plus intelligents</span>
-      <span>🌍 Monde : Une ville interdit tous les smartphones</span>
-      <span>🌙 Sciences : La Lune deviendrait verte en 2026</span>
-      <span>🤖 Tech : Une IA prédit la prochaine catastrophe mondiale</span>
+      <span>⚡ URGENT : Une pluie de spaghettis annoncée dans le sud de la France</span>
+      <span>🛸 Insolite : Des moutons alignés en cercle intriguent les astronomes</span>
+      <span>🌋 Monde : Un volcan aurait chanté du Céline Dion avant d’entrer en éruption</span>
+      <span>🐙 Océan : Une pieuvre géante aperçue en train de jongler avec des bouées</span>
     </div>
   </div>
 
   <!-- Contenu principal -->
-  <main class="container layout">
-    <div class="main-content article-page">
-      <article>
-        <h1>HyperBrainZ : la boisson miracle ?</h1>
-        <p class="meta">Par <strong>Dr. J. Vérité</strong> | 12 octobre 2026</p>
-        <img src="../assets/images/hyperbrainz-boisson.png" alt="Boisson HyperBrainZ sur une table" />
+  <main class="container mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Article -->
+    <div class="lg:col-span-2">
+      <article class="bg-white rounded-lg shadow-md p-6 space-y-4">
+        <img src="../assets/images/hyperbrainz-boisson.png" alt="Boisson HyperBrainZ"
+             class="w-full max-w-2xl mx-auto rounded-lg mb-6" loading="lazy" decoding="async" width="960" height="540">
 
-        <p>
-          Une étude « exclusive » affirme que la consommation régulière d’<em>HyperBrainZ</em>
-          permettrait aux adolescents d’augmenter leur quotient intellectuel de 300 %.
-        </p>
-        <p>
-          L’annonce a été faite lors d’une conférence organisée par l’<strong>Institut Global des Neurosciences Appliquées™</strong>, 
-          une structure privée basée à Genève qui revendique plus de 15 ans d’expérience dans le domaine du « neuro-marketing ». 
-          Selon ses chercheurs, un panel de <strong>1 200 volontaires</strong>, âgés de 14 à 18 ans, aurait montré une amélioration 
-          spectaculaire des performances scolaires après trois semaines de consommation quotidienne.
-        </p>
-        <p>
-          Le produit, lancé récemment sur le marché, se présente comme une boisson énergisante enrichie
-          en « nano-molécules neuroactives ». Selon le communiqué de presse de la société, il suffirait
-          de deux canettes par jour pour « booster » la mémoire, accélérer la vitesse de lecture et renforcer
-          la créativité. Une publication préliminaire, annoncée dans la revue <em>NeuroScience Advances</em>,
-          reste toutefois introuvable dans les bases de données scientifiques habituelles (<a href="#">PubMed</a>, <a href="#">ScienceDirect</a>).
-        </p>
-        <p>
-          Plusieurs experts interrogés par <em>Actu Sûre Express</em> se montrent prudents. 
-          Le Pr. <strong>Élise Morel</strong>, neuropsychologue à l’Université de Lyon, souligne que 
-          « parler d’une hausse de 300 % du QI n’a aucun sens scientifique. Le quotient intellectuel est un score standardisé : 
-          il ne peut pas tripler en quelques semaines, quelle que soit la substance ingérée ».
-        </p>
-        <p>
-          D’autres chercheurs rappellent que le financement de l’étude provient directement de la société 
-          <em>NeuroBoost Corp</em>, détentrice de la marque HyperBrainZ. 
-          L’absence de publication indépendante ou de validation par un comité de pairs soulève donc de sérieux doutes.
-        </p>
-        <p>
-          Malgré cela, la boisson connaît un succès commercial fulgurant. Dans plusieurs lycées d’Île-de-France, 
-          les distributeurs automatiques affichent déjà des ruptures de stock. Sur TikTok, le hashtag 
-          <strong>#HyperBrainZChallenge</strong> cumule plus de 30 millions de vues, alimentant la viralité du produit auprès des adolescents.
-        </p>
-        <p>
-          Du côté des autorités sanitaires, aucune alerte officielle n’a encore été émise. 
-          L’<strong>Agence européenne de sécurité des aliments (EFSA)</strong> a néanmoins déclaré « suivre le dossier avec attention » 
-          et appelle à la prudence face à des résultats jugés « trop spectaculaires pour être crédibles ».
-        </p>
+        <p>Une étude « exclusive » affirme que la consommation régulière d’<em>HyperBrainZ</em> permettrait aux adolescents d’augmenter leur quotient intellectuel de 300 %.</p>
+        <p>L’annonce a été faite lors d’une conférence organisée par l’<strong>Institut Global des Neurosciences Appliquées™</strong>, basé à Genève...</p>
+        <p>Le produit se présente comme une boisson énergisante enrichie en « nano-molécules neuroactives »...</p>
+        <p>Le Pr. <strong>Élise Morel</strong>, neuropsychologue à Lyon, souligne que « parler d’une hausse de 300 % du QI n’a aucun sens scientifique ».</p>
+        <p>D’autres chercheurs rappellent que le financement provient directement de <em>NeuroBoost Corp</em>...</p>
+        <p>Sur TikTok, le hashtag <strong>#HyperBrainZChallenge</strong> cumule plus de 30 millions de vues.</p>
+        <p>L’<strong>EFSA</strong> appelle à la prudence face à des résultats jugés « trop spectaculaires ».</p>
 
-        <div class="notice">
-          ⚠️ <strong>Attention :</strong> Cet article est entièrement fictif et fait partie d’un exercice pédagogique 
-          de sensibilisation aux fake news. Les noms d’instituts, chiffres et citations sont inventés.
+        <!-- DISCLAIMER (caché par défaut) -->
+        <div class="notice hidden bg-yellow-50 border border-yellow-200 text-yellow-800 p-4 rounded">
+          ⚠️ <strong>Attention :</strong> Cet article est fictif et fait partie d’un exercice pédagogique de sensibilisation aux fake news.
         </div>
       </article>
     </div>
 
-    <!-- Colonne pub -->
-    <aside class="sidebar">
-      <div class="fake-ad" id="carAdSlot">
-        <img id="carAdImage" src="../assets/images/pub-voiture-electrique.png" alt="Publicité automobile" />
-        <p id="carAdText">NovaCar E-Drive – L’avenir est déjà là ⚡</p>
+    <!-- Sidebar -->
+    <aside>
+      <div class="bg-white shadow-md rounded-lg p-4">
+        <h3 class="font-bold text-gray-800 mb-2">Publicité</h3>
+        <img src="../assets/images/pub-voiture-electrique.png" alt="Pub voiture électrique" class="rounded mb-2">
+        <p class="text-sm text-gray-600">NovaCar E-Drive – L’avenir est déjà là ⚡</p>
       </div>
     </aside>
   </main>
 
   <!-- Footer -->
-  <footer class="site-footer">
-    <div class="container">
-      © 2025 — « Actu Sûre Express ». Prototype pédagogique Cybermois.
+  <footer class="bg-gray-800 text-white py-8">
+    <div class="container mx-auto text-center">
+      © 2025 — Actu Sûre Express. Prototype pédagogique Cybermois.
     </div>
   </footer>
 
-  <script src="../script.js"></script>
+  <!-- Bouton discret en bas à droite pour afficher/masquer le disclaimer -->
+  <button id="eduMiniToggle"
+          class="fixed bottom-6 right-6 z-50 w-10 h-10 flex items-center justify-center
+                 rounded-full bg-white/80 backdrop-blur-md border border-gray-300 text-gray-800 shadow
+                 hover:bg-white"
+          title="Afficher/masquer le disclaimer">?</button>
+
+  <script>
+    // Menu mobile
+    document.getElementById('menu-toggle')?.addEventListener('click', function() {
+      document.getElementById('mobile-menu')?.classList.toggle('hidden');
+    });
+
+    // Feather + AOS
+    feather.replace();
+    AOS.init();
+
+    // Toggle disclaimer via le bouton bas-droite
+    const miniBtn = document.getElementById('eduMiniToggle');
+    miniBtn?.addEventListener('click', () => {
+      document.querySelectorAll('.notice').forEach(n => n.classList.toggle('hidden'));
+    });
+  </script>
 </body>
 </html>

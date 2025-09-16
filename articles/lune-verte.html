@@ -2,105 +2,163 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>La Lune deviendrait verte en 2026 selon une fuite</title>
-  <link rel="stylesheet" href="../style.css">
-  <link rel="icon" type="image/png" href="../assets/images/favicon.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Roboto', sans-serif; background-color: #f8f9fa; }
+    h1, h2, h3 { font-family: 'Playfair Display', serif; }
+    .navbar { backdrop-filter: blur(10px); }
+    .breaking-news { background: #dc2626; color: white; overflow: hidden; position: relative; }
+    .ticker { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 25s linear infinite; }
+    .ticker span { margin: 0 2rem; }
+    @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+    /* Bouton notice */
+    #toggleNoticeBtn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #fbbf24;
+      color: #000;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      opacity: 0.6;
+      transition: opacity 0.3s;
+      z-index: 50;
+    }
+    #toggleNoticeBtn:hover { opacity: 1; }
+    .notice { display: none; }
+  </style>
 </head>
-<body>
-  <button id="toggleNoticeBtn">Cacher bandeaux</button>
+<body class="bg-gray-50">
 
-  <header class="site-header">
-    <div class="container logo-bar">
-      <a href="../index.html">
-        <img src="../assets/images/logo-actu-sure.png" alt="Logo Actu Sûre Express" class="logo-img" />
-      </a>
-      <div class="logo">
-        <a href="../index.html" style="text-decoration:none; color:inherit;">Actu <span class="accent">Sûre</span> Express</a>
+  <!-- Navbar -->
+  <nav class="navbar fixed w-full bg-white bg-opacity-90 shadow-sm z-50">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <a href="../index.html" class="text-2xl font-bold text-blue-800">Actu Sûre Express</a>
+      <div class="hidden md:flex space-x-6">
+        <a href="../index.html" class="text-gray-700 hover:text-blue-600">International</a>
+        <a href="../index.html" class="text-gray-700 hover:text-blue-600">Politique</a>
+        <a href="../index.html" class="text-gray-700 hover:text-blue-600">Économie</a>
+        <a href="../index.html" class="text-gray-700 hover:text-blue-600">Sciences</a>
+        <a href="../index.html" class="text-gray-700 hover:text-blue-600">Culture</a>
       </div>
+      <button class="md:hidden focus:outline-none" id="menu-toggle"><i data-feather="menu"></i></button>
     </div>
-    <nav class="navbar">
-  <ul>
-    <li><a href="../index.html">International</a></li>
-    <li><a href="../index.html">Politique</a></li>
-    <li><a href="../index.html">Société</a></li>
-    <li><a href="../index.html">Économie</a></li>
-    <li><a href="../index.html">Sciences</a></li>
-    <li><a href="../index.html">Culture</a></li>
-    <li><a href="../index.html">Opinions</a></li>
-  </ul>
-</nav>
+    <div class="md:hidden hidden bg-white w-full py-2 px-4 shadow-md" id="mobile-menu">
+      <a href="../index.html" class="block py-2 text-gray-700 hover:text-blue-600">International</a>
+      <a href="../index.html" class="block py-2 text-gray-700 hover:text-blue-600">Politique</a>
+      <a href="../index.html" class="block py-2 text-gray-700 hover:text-blue-600">Économie</a>
+      <a href="../index.html" class="block py-2 text-gray-700 hover:text-blue-600">Sciences</a>
+      <a href="../index.html" class="block py-2 text-gray-700 hover:text-blue-600">Culture</a>
+    </div>
+  </nav>
 
-    <div class="en-ce-moment">
-      <span class="label">En ce moment</span>
-      <a href="boisson.html">Boisson miracle</a> ·
-      <a href="lune-verte.html">Lune verte</a> ·
-      <a href="ville-smartphone.html">Smartphones bannis</a>
+  <!-- Hero -->
+  <header class="pt-24 pb-8 bg-gradient-to-r from-blue-800 to-blue-600 text-white text-center">
+    <h1 class="text-4xl md:text-5xl font-bold mb-2">La Lune deviendrait verte en 2026 selon une fuite</h1>
+    <p class="text-gray-200">Publié le 2 octobre 2026 — Par Hugo Renaud</p>
+
+    <!-- Barre de recherche -->
+    <div class="max-w-2xl mx-auto relative mt-6">
+      <input type="text" placeholder="Rechercher des articles..." class="w-full py-3 px-6 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <button class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-700 text-white p-2 rounded-full hover:bg-blue-800">
+        <i data-feather="search"></i>
+      </button>
     </div>
   </header>
 
+  <!-- Breaking news -->
   <div class="breaking-news">
     <div class="ticker">
-      <span>⚡ URGENT : Une boisson rendrait les ados 3× plus intelligents</span>
-      <span>🌍 Monde : Une ville interdit tous les smartphones</span>
-      <span>🌙 Sciences : La Lune deviendrait verte en 2026</span>
-      <span>🤖 Tech : Une IA prédit la prochaine catastrophe mondiale</span>
+      <span>🌕 Sciences : La Lune aurait signé un contrat avec une marque de peinture verte</span>
+      <span>🦑 Océan : Une pieuvre a battu le record du Rubik’s Cube en 4 secondes</span>
+      <span>🎸 Culture : Un mammouth ressuscité donne son premier concert rock</span>
+      <span>🚀 Espace : Des kangourous auraient été observés sur Mars</span>
     </div>
   </div>
 
-  <main class="container layout">
-    <div class="main-content article-page">
+  <!-- Contenu principal -->
+  <main class="container mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <!-- Article -->
+    <div class="lg:col-span-2 bg-white rounded-lg shadow-md p-6">
       <article>
-        <h1>La Lune deviendrait verte en 2026 selon une fuite</h1>
-        <p class="meta">Par <strong>Hugo Renaud</strong> | 2 octobre 2026</p>
-        <img src="../assets/images/lune-verte.png" alt="Photo de la Lune modifiée en vert" />
+        <img src="../assets/images/lune-verte.png" alt="Photo de la Lune modifiée en vert" class="w-full max-w-2xl mx-auto rounded-lg mb-6"
+     loading="lazy" decoding="async" width="960" height="540">
 
-        <p>
+        <p class="mb-4">
           Une « fuite » interne relayée par plusieurs blogs scientifiques affirme que la Lune 
           pourrait changer de couleur et devenir verte dès 2026.  
           Le phénomène serait lié à une modification de la composition chimique de la surface lunaire.
         </p>
-        <p>
+        <p class="mb-4">
           Selon un document attribué à la <strong>NASA</strong>, des analyses spectroscopiques récentes 
           auraient détecté une « forte concentration de chrome et de cuivre », 
           deux métaux qui pourraient altérer la teinte de la régolite lunaire.  
           Aucune publication officielle n’a confirmé ces résultats.
         </p>
-        <p>
+        <p class="mb-4">
           Le Dr. <strong>Martin Keller</strong>, astrophysicien fictif de l’Université de Berlin, déclare : 
           « Un changement global de couleur de la Lune est extrêmement improbable. 
           Cela demanderait une modification de masse, que nous n’observons pas. »
         </p>
-        <p>
+        <p class="mb-4">
           Les images circulant en ligne semblent retouchées : saturation forcée, 
           ajout de filtres colorés. Plusieurs astronomes amateurs soulignent que 
           les clichés originaux ne montrent aucune anomalie.
         </p>
-        <p>
+        <p class="mb-4">
           Pourtant, sur les réseaux sociaux, l’hashtag <strong>#GreenMoon</strong> 
           cumule déjà des millions de vues, entre fascination et peur d’une « prophétie cosmique ».
         </p>
 
-        <div class="notice">
+        <!-- Notice pédagogique masquée -->
+        <div class="notice bg-yellow-50 border border-yellow-200 text-yellow-800 p-4 rounded mt-6">
           ⚠️ <strong>Attention :</strong> Cet article est fictif.  
           Il est conçu pour montrer comment des « fuites » pseudo-scientifiques peuvent se diffuser.
         </div>
       </article>
     </div>
 
-    <aside class="sidebar">
-      <div class="fake-ad" id="carAdSlot">
-        <img id="carAdImage" src="../assets/images/pub-voiture-electrique.png" alt="Publicité automobile" />
-        <p id="carAdText">NovaCar E-Drive – L’avenir est déjà là ⚡</p>
+    <!-- Pub -->
+    <aside>
+      <div class="bg-white shadow-md rounded-lg p-4 text-center">
+        <img id="carAdImage" src="../assets/images/pub-voiture-electrique.png" alt="Publicité voiture" class="mx-auto mb-2">
+        <p id="carAdText" class="text-sm text-gray-600">NovaCar E-Drive – L’avenir est déjà là ⚡</p>
       </div>
     </aside>
   </main>
 
-  <footer class="site-footer">
-    <div class="container">
-      © 2025 — « Actu Sûre Express ». Prototype pédagogique Cybermois.
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-12">
+    <div class="container mx-auto px-4 text-center">
+      © 2025 — Actu Sûre Express. Prototype pédagogique Cybermois.
     </div>
   </footer>
 
+  <!-- Bouton ℹ️ -->
+  <button id="toggleNoticeBtn">ℹ️</button>
+
   <script src="../script.js"></script>
+  <script>
+    document.getElementById('menu-toggle').addEventListener('click', function() {
+      document.getElementById('mobile-menu').classList.toggle('hidden');
+    });
+    feather.replace();
+    AOS.init();
+
+    // Bouton pédagogique
+    const notice = document.querySelector('.notice');
+    const toggleBtn = document.getElementById('toggleNoticeBtn');
+    toggleBtn.addEventListener('click', () => {
+      notice.style.display = (notice.style.display === 'none' || notice.style.display === '') ? 'block' : 'none';
+    });
+  </script>
 </body>
 </html>
