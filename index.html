@@ -1,234 +1,684 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Actu Sûre Express - L'info en continu</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Actu Sûre Express</title>
+
+  <!-- Tailwind & libs -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- Favicon -->
   <link rel="icon" type="image/png" href="assets/images/favicon.png" />
+
+  <style>
+    body { font-family: 'Roboto', sans-serif; background-color: #f8f9fa; }
+    h1, h2, h3 { font-family: 'Playfair Display', serif; }
+    .article-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+    .fade-out { opacity: 0; transition: opacity 0.8s ease; }
+    .fade-in { opacity: 1; transition: opacity 0.8s ease; }
+
+    /* Breaking news bandeau */
+    .breaking-news { background: #dc2626; color: white; overflow: hidden; position: relative; }
+    .ticker { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 25s linear infinite; }
+    .ticker span { margin: 0 2rem; }
+    @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+
+    /* Overlay fix mobile */
+    @media (max-width: 768px) {
+      #eduOverlay .quiz-item p { line-height: 1.3; }
+    }
+  </style>
 </head>
+<body class="bg-gray-50">
 
-<!-- Faux certificat d'abonnement -->
-<div class="fake-popup hidden" id="fakePopup">
-  <div class="popup-content">
-    <h2>🎁 Offre exclusive -70% 🎁</h2>
-    <p>Abonnez-vous aujourd’hui et recevez un <strong>certificat premium</strong> !</p>
-    <p class="price">Seulement <strong>4 € / mois</strong></p>
-    
-    <form>
-      <label for="prenom">Prénom</label>
-      <input type="text" id="prenom" placeholder="Votre prénom" required />
+  <!-- ===================== SURCOUCHE (OVERLAY) OUTIL D'ANALYSE ===================== -->
+  <div id="eduOverlay" class="fixed inset-0 z-50 hidden">
+    <!-- fond -->
+    <div class="absolute inset-0 bg-black/50"></div>
 
-      <label for="nom">Nom</label>
-      <input type="text" id="nom" placeholder="Votre nom" required />
-
-      <label for="cb">Numéro de carte</label>
-      <input type="text" id="cb" placeholder="1234 5678 9012 3456" maxlength="19" required />
-
-      <label for="titulaire">Nom du titulaire</label>
-      <input type="text" id="titulaire" placeholder="Comme indiqué sur la carte" required />
-
-      <div class="card-details">
-        <div>
-          <label for="exp">Date d’expiration</label>
-          <input type="text" id="exp" placeholder="MM/AA" maxlength="5" required />
-        </div>
-        <div>
-          <label for="ccv">CCV</label>
-          <input type="text" id="ccv" placeholder="123" maxlength="3" required />
-        </div>
+    <!-- panneau -->
+    <div class="relative max-w-5xl mx-auto my-8 md:my-16 bg-white rounded-2xl shadow-xl overflow-hidden h-[85vh] flex flex-col">
+      <!-- Entête -->
+      <div class="flex items-center justify-between px-6 py-4 border-b shrink-0">
+        <h3 class="text-xl md:text-2xl font-bold">Outil d’analyse</h3>
+        <button id="eduOverlayClose" class="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-800">Fermer</button>
       </div>
 
-      <button type="submit" class="btn primary">Valider l'abonnement</button>
-    </form>
-    <button class="btn ghost" id="closePopup">❌ Fermer</button>
-  </div>
-</div>
+      <!-- Contenu scrollable -->
+      <div class="flex-1 overflow-hidden">
+        <div class="grid md:grid-cols-2 gap-6 p-6 h-full">
+          <!-- Col 1 : Indices + mini chart -->
+          <section class="overflow-y-auto pr-2">
+            <h4 class="font-semibold text-lg mb-3">Indices de désinformation</h4>
+            <p class="text-sm text-gray-600 mb-4">
+              Active <em>Révéler les indices</em> pour afficher des drapeaux d’alerte directement sur les cartes d’articles.
+            </p>
 
+            <ul class="space-y-2 text-sm">
+              <li>🔶 <strong>Titre choc</strong> : formulation spectaculaire ou absolue.</li>
+              <li>🔶 <strong>Source floue</strong> : « des experts », « une étude » sans lien réel.</li>
+              <li>🔶 <strong>Image manipulée</strong> : visuels retouchés ou hors contexte.</li>
+              <li>🔶 <strong>Vocabulaire biaisé</strong> : charge émotionnelle très forte.</li>
+            </ul>
 
+            <div class="mt-6">
+              <h5 class="font-semibold mb-2">Répartition (exemple)</h5>
+              <div class="w-full max-w-xs">
+                <canvas id="miniTrapChart" height="220"></canvas>
+              </div>
+            </div>
+          </section>
 
+          <!-- Col 2 : Quiz paginé 2 pages -->
+          <section id="eduQuiz" class="h-full flex flex-col">
+            <div class="flex items-center justify-between mb-3">
+              <h4 class="font-semibold text-lg">Quiz rapide</h4>
+              <div class="flex items-center gap-2 text-sm">
+                <button id="quizPrev" class="px-2 py-1 rounded border hover:bg-gray-100">◀</button>
+                <span id="quizStep" class="font-medium">Page 1/2</span>
+                <button id="quizNext" class="px-2 py-1 rounded border hover:bg-gray-100">▶</button>
+              </div>
+            </div>
 
-<body>
-  <!-- Bouton notices -->
-  <button id="toggleNoticeBtn">Cacher bandeaux</button>
+            <div class="mb-2 flex items-center justify-between text-sm">
+              <p>Score : <span id="eduScore">0</span> / <span id="eduTotal">0</span></p>
+              <button id="eduQuizReset" class="px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-700">Recommencer</button>
+            </div>
 
-  <!-- Bandeau rubriques -->
-  <header class="site-header">
-    <div class="container logo-bar">
-      <img src="assets/images/logo-actu-sure.png" alt="Logo Actu Sûre Express" class="logo-img" />
-      <div class="logo">Actu <span class="accent">Sûre</span> Express</div>
+            <div id="eduQuizQuestions" class="relative flex-1 overflow-hidden">
+              <!-- PAGE 1 -->
+              <div id="eduQuizPage1" class="quiz-page h-full overflow-y-auto pr-2 space-y-5">
+                <div class="quiz-item p-3 rounded border">
+                  <p class="font-medium">1) Un lien “Voir la source” suffit à prouver la fiabilité d’un article.</p>
+                  <div class="mt-2 flex gap-2">
+                    <button data-q="1" data-a="false" class="px-3 py-1 text-sm rounded border hover:bg-gray-100">Vrai</button>
+                    <button data-q="1" data-a="true"  class="px-3 py-1 text-sm rounded border hover:bg-gray-100">Faux</button>
+                  </div>
+                  <p class="mt-2 text-sm text-gray-600 hidden" data-exp="1">Un lien peut être mort, secondaire ou ne pas confirmer l’info principale.</p>
+                </div>
+
+                <div class="quiz-item p-3 rounded border">
+                  <p class="font-medium">2) Une URL qui imite un média connu est suspecte.</p>
+                  <div class="mt-2 flex gap-2">
+                    <button data-q="2" data-a="true"  class="px-3 py-1 text-sm rounded border hover:bg-gray-100">Vrai</button>
+                    <button data-q="2" data-a="false" class="px-3 py-1 text-sm rounded border hover:bg-gray-100">Faux</button>
+                  </div>
+                  <p class="mt-2 text-sm text-gray-600 hidden" data-exp="2">C’est du typosquatting : une stratégie classique d’usurpation.</p>
+                </div>
+
+                <div class="quiz-item p-3 rounded border">
+                  <p class="font-medium">3) Un vocabulaire très émotionnel est un signe d’objectivité journalistique.</p>
+                  <div class="mt-2 flex gap-2">
+                    <button data-q="3" data-a="false" class="px-3 py-1 text-sm rounded border hover:bg-gray-100">Vrai</button>
+                    <button data-q="3" data-a="true"  class="px-3 py-1 text-sm rounded border hover:bg-gray-100">Faux</button>
+                  </div>
+                  <p class="mt-2 text-sm text-gray-600 hidden" data-exp="3">Le journalisme factuel évite la charge émotionnelle.</p>
+                </div>
+
+                <div class="quiz-item p-3 rounded border">
+                  <p class="font-medium">4) Une image virale prouve l’événement, même sans contexte ni source.</p>
+                  <div class="mt-2 flex gap-2">
+                    <button data-q="4" data-a="false" class="px-3 py-1 text-sm rounded border hover:bg-gray-100">Vrai</button>
+                    <button data-q="4" data-a="true"  class="px-3 py-1 text-sm rounded border hover:bg-gray-100">Faux</button>
+                  </div>
+                  <p class="mt-2 text-sm text-gray-600 hidden" data-exp="4">Les images peuvent être anciennes, retouchées ou hors contexte.</p>
+                </div>
+
+                <div class="quiz-item p-3 rounded border">
+                  <p class="font-medium">5) “98,9 % de précision” sans protocole publié n’est pas une preuve solide.</p>
+                  <div class="mt-2 flex gap-2">
+                    <button data-q="5" data-a="true"  class="px-3 py-1 text-sm rounded border hover:bg-gray-100">Vrai</button>
+                    <button data-q="5" data-a="false" class="px-3 py-1 text-sm rounded border hover:bg-gray-100">Faux</button>
+                  </div>
+                  <p class="mt-2 text-sm text-gray-600 hidden" data-exp="5">Sans méthode, échantillon, reproductibilité, la “précision” ne veut pas dire grand-chose.</p>
+                </div>
+              </div>
+
+              <!-- PAGE 2 -->
+              <div id="eduQuizPage2" class="quiz-page hidden h-full overflow-y-auto pr-2 space-y-5">
+                <div class="quiz-item p-3 rounded border">
+                  <p class="font-medium">6) Corrélation = causalité.</p>
+                  <div class="mt-2 flex gap-2">
+                    <button data-q="6" data-a="false" class="px-3 py-1 text-sm rounded border hover:bg-gray-100">Vrai</button>
+                    <button data-q="6" data-a="true"  class="px-3 py-1 text-sm rounded border hover:bg-gray-100">Faux</button>
+                  </div>
+                  <p class="mt-2 text-sm text-gray-600 hidden" data-exp="6">Non. Deux phénomènes corrélés ne prouvent pas que l’un cause l’autre.</p>
+                </div>
+
+                <div class="quiz-item p-3 rounded border">
+                  <p class="font-medium">7) Les “experts anonymes” sont une source suffisante pour des affirmations extraordinaires.</p>
+                  <div class="mt-2 flex gap-2">
+                    <button data-q="7" data-a="false" class="px-3 py-1 text-sm rounded border hover:bg-gray-100">Vrai</button>
+                    <button data-q="7" data-a="true"  class="px-3 py-1 text-sm rounded border hover:bg-gray-100">Faux</button>
+                  </div>
+                  <p class="mt-2 text-sm text-gray-600 hidden" data-exp="7">Les affirmations extraordinaires exigent des preuves vérifiables et transparentes.</p>
+                </div>
+
+                <div class="quiz-item p-3 rounded border">
+                  <p class="font-medium">8) Un “PDF” hébergé sur un site inconnu peut être considéré comme une publication scientifique.</p>
+                  <div class="mt-2 flex gap-2">
+                    <button data-q="8" data-a="false" class="px-3 py-1 text-sm rounded border hover:bg-gray-100">Vrai</button>
+                    <button data-q="8" data-a="true"  class="px-3 py-1 text-sm rounded border hover:bg-gray-100">Faux</button>
+                  </div>
+                  <p class="mt-2 text-sm text-gray-600 hidden" data-exp="8">Une vraie publication passe par un comité de lecture et des bases indexées (revue, DOI…).</p>
+                </div>
+
+                <div class="quiz-item p-3 rounded border">
+                  <p class="font-medium">9) Les chiffres absolus sont toujours plus informatifs que les taux/rapports normalisés.</p>
+                  <div class="mt-2 flex gap-2">
+                    <button data-q="9" data-a="false" class="px-3 py-1 text-sm rounded border hover:bg-gray-100">Vrai</button>
+                    <button data-q="9" data-a="true"  class="px-3 py-1 text-sm rounded border hover:bg-gray-100">Faux</button>
+                  </div>
+                  <p class="mt-2 text-sm text-gray-600 hidden" data-exp="9">Les taux (% / par million) permettent de comparer des populations de tailles différentes.</p>
+                </div>
+
+                <div class="quiz-item p-3 rounded border">
+                  <p class="font-medium">10) Des articles qui se citent en boucle sans source primaire fiable : c’est un signal d’alerte.</p>
+                  <div class="mt-2 flex gap-2">
+                    <button data-q="10" data-a="true"  class="px-3 py-1 text-sm rounded border hover:bg-gray-100">Vrai</button>
+                    <button data-q="10" data-a="false" class="px-3 py-1 text-sm rounded border hover:bg-gray-100">Faux</button>
+                  </div>
+                  <p class="mt-2 text-sm text-gray-600 hidden" data-exp="10">C’est de la “citation circulaire” : pas de source primaire, fiabilité douteuse.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-3 flex items-center justify-end gap-2 pt-3 border-t">
+              <button id="closeOverlayFromQuiz" class="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200">Fermer</button>
+            </div>
+          </section>
+        </div>
+      </div>
     </div>
-    <nav class="navbar">
-  <ul>
-    <li><a href="index.html">International</a></li>
-    <li><a href="index.html">Politique</a></li>
-    <li><a href="index.html">Société</a></li>
-    <li><a href="index.html">Économie</a></li>
-    <li><a href="index.html">Sciences</a></li>
-    <li><a href="index.html">Culture</a></li>
-    <li><a href="index.html">Opinions</a></li>
-  </ul>
-</nav>
+  </div>
+  <!-- ===================== FIN SURCOUCHE ===================== -->
 
+  <!-- Popup factice abonnement (affichée par JS) -->
+  <div id="fakePopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-8 rounded-lg max-w-md text-center shadow-lg">
+      <h2 class="text-2xl font-bold mb-4">🎁 Offre exclusive -70% 🎁</h2>
+      <p>Abonnez-vous aujourd’hui et recevez un <strong>certificat premium</strong> !</p>
+      <p class="text-red-600 font-bold mb-4">Seulement 4 € / mois</p>
+      <form class="space-y-2">
+        <input type="text" placeholder="Prénom" required class="w-full border px-3 py-2 rounded">
+        <input type="text" placeholder="Nom" required class="w-full border px-3 py-2 rounded">
+        <input type="text" placeholder="1234 5678 9012 3456" maxlength="19" required class="w-full border px-3 py-2 rounded">
+        <input type="text" placeholder="Titulaire de la carte" required class="w-full border px-3 py-2 rounded">
+        <div class="flex space-x-2">
+          <input type="text" placeholder="MM/AA" maxlength="5" required class="flex-1 border px-3 py-2 rounded">
+          <input type="text" placeholder="CCV" maxlength="3" required class="flex-1 border px-3 py-2 rounded">
+        </div>
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Valider l’abonnement</button>
+      </form>
+      <button id="closePopup" class="mt-4 text-gray-600 hover:text-gray-800">❌ Fermer</button>
+    </div>
+  </div>
 
-    <div class="en-ce-moment">
-      <span class="label">En ce moment</span>
-      <a href="articles/boisson.html">Boisson miracle</a> ·
-      <a href="articles/lune-verte.html">Lune verte</a> ·
-      <a href="articles/ville-smartphone.html">Smartphones bannis</a>
+  <!-- Header (logo à gauche, recherche + nav à droite) — version compacte -->
+  <header class="pt-6 pb-4 bg-gradient-to-r from-blue-800 to-blue-600 text-white">
+    <div class="container mx-auto px-4">
+      <div class="grid md:grid-cols-3 gap-4 items-center">
+        <!-- Logo -->
+        <div class="md:col-span-1 flex md:justify-start justify-center">
+          <a href="index.html" class="block">
+            <img src="assets/images/logo-actu-sure.png" alt="Logo Actu Sûre Express" class="h-20 md:h-28 w-auto">
+          </a>
+        </div>
+
+        <!-- Recherche + nav + tagline -->
+        <div class="md:col-span-2 text-center md:text-left">
+          <p class="mb-3 md:mb-4">
+            <span class="block text-xl md:text-2xl leading-tight text-white/95 tracking-wide italic drop-shadow-sm"
+                  style="font-family:'Playfair Display', serif;">L’information fiable et rapide</span>
+          </p>
+
+          <div class="max-w-2xl md:max-w-2xl md:ml-0 mx-auto relative">
+            <input type="text" placeholder="Rechercher des articles..."
+                   class="w-full py-2.5 px-5 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-200">
+            <button class="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-700 text-white p-2 rounded-full hover:bg-blue-800" aria-label="Rechercher">
+              <i data-feather="search"></i>
+            </button>
+          </div>
+
+          <nav class="mt-4">
+            <div class="flex flex-wrap md:justify-start justify-center gap-2.5 text-white/90">
+              <a href="index.html" class="px-2.5 py-0.5 rounded hover:bg-white/10">International</a>
+              <a href="index.html" class="px-2.5 py-0.5 rounded hover:bg-white/10">Politique</a>
+              <a href="index.html" class="px-2.5 py-0.5 rounded hover:bg-white/10">Économie</a>
+              <a href="index.html" class="px-2.5 py-0.5 rounded hover:bg-white/10">Sciences</a>
+              <a href="index.html" class="px-2.5 py-0.5 rounded hover:bg-white/10">Culture</a>
+            </div>
+          </nav>
+        </div>
+      </div>
     </div>
   </header>
 
-  <!-- Breaking News -->
+  <!-- Breaking news -->
   <div class="breaking-news">
-    <div class="ticker" id="ticker">
-      <span>⚡ URGENT : Une boisson rendrait les ados 3× plus intelligents</span>
-      <span>🌍 Monde : Une ville interdit tous les smartphones</span>
-      <span>🌙 Sciences : La Lune deviendrait verte en 2026</span>
-      <span>🤖 Tech : Une IA prédit la prochaine catastrophe mondiale</span>
+    <div class="ticker">
+      <span>⚡ URGENT : Une pluie de spaghettis annoncée dans le sud de la France</span>
+      <span>🛸 Insolite : Des moutons alignés en cercle intriguent les astronomes</span>
+      <span>🌋 Monde : Un volcan aurait chanté du Céline Dion avant d’entrer en éruption</span>
+      <span>🐙 Océan : Une pieuvre géante aperçue en train de jongler avec des bouées</span>
     </div>
   </div>
 
-  <!-- Contenu principal -->
-  <main class="container layout">
+  <!-- Barre flottante (masquée par défaut) -->
+  <div id="eduActions"
+       class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50
+              bg-white/20 backdrop-blur-md border border-white/30 shadow-lg
+              rounded-full px-3 py-2 flex flex-wrap gap-2 items-center">
+    <button id="toggleNoticeBtn"
+            class="px-3 py-1 text-sm rounded-full bg-yellow-400/90 hover:bg-yellow-400 text-black">
+      Afficher bandeaux
+    </button>
+    <button id="revealBtn"
+            class="px-3 py-1 text-sm rounded-full bg-blue-600/90 hover:bg-blue-600 text-white">
+      Révéler les indices 🔎
+    </button>
+    <button id="quizBtn"
+            class="px-3 py-1 text-sm rounded-full bg-green-600/90 hover:bg-green-600 text-white">
+      Lancer le quiz
+    </button>
+  </div>
+
+  <!-- Bouton discret (toujours visible) -->
+  <button id="eduMiniToggle"
+          class="fixed bottom-6 right-6 z-50 w-10 h-10 flex items-center justify-center
+                 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white
+                 hover:bg-white/30"
+          title="Outils pédagogiques">?</button>
+
+  <!-- Contenu principal — légèrement agrandi -->
+  <main class="container mx-auto px-4 py-14 grid grid-cols-1 lg:grid-cols-3 gap-10">
     <!-- Colonne principale -->
-    <div class="main-content">
-      <!-- Article principal -->
-      <section class="lead annot" data-annotation="Titre sensationnaliste, image sans source">
-        <article>
-          <a href="articles/boisson.html">
-            <img src="assets/images/hyperbrainz-boisson.png" alt="Canette HyperBrainZ posée sur une table" />
-            <h1>« Une boisson rendrait les ados 3× plus intelligents », selon une étude choc</h1>
+    <div class="lg:col-span-2 space-y-14">
+      <!-- À la une -->
+      <section>
+        <h2 class="text-4xl font-bold mb-10 text-gray-800 border-b pb-3">À la une</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          <a href="articles/boisson.html" class="block bg-white rounded-xl overflow-hidden shadow-lg article-card transition duration-300">
+            <img src="assets/images/hyperbrainz-boisson.png" alt="Boisson HyperBrainZ" class="w-full h-36 md:h-44 object-cover" loading="lazy" decoding="async">
+            <div class="p-6">
+              <span class="text-[13px] md:text-sm text-blue-600 font-medium">Sciences</span>
+              <h3 class="text-xl md:text-2xl font-bold mt-2 mb-2 text-gray-800 leading-snug">« Une boisson rendrait les ados 3× plus intelligents »</h3>
+            </div>
           </a>
-          <p class="meta">Par <strong>Dr. J. Vérité</strong> | 12 octobre 2026</p>
-          <p>
-            Une étude exclusive menée par l'Institut Global des Neurosciences Appliquées™ sur <strong>87 %</strong> des adolescents
-            montre une augmentation spectaculaire du QI après consommation de <em>HyperBrainZ</em>.
-            <a href="#" class="source-link" data-dead-source>Voir la source</a>
-          </p>
-          <div class="flag">⚠️ Indices : date incohérente, chiffre invérifiable, lien mort</div>
-        </article>
+
+          <a href="articles/ville-smartphone.html" class="block bg-white rounded-xl overflow-hidden shadow-lg article-card transition duration-300">
+            <img src="assets/images/ville-sans-smartphone.png" alt="Ville sans smartphone" class="w-full h-36 md:h-44 object-cover" loading="lazy" decoding="async">
+            <div class="p-6">
+              <span class="text-[13px] md:text-sm text-green-600 font-medium">Société</span>
+              <h3 class="text-xl md:text-2xl font-bold mt-2 mb-2 text-gray-800 leading-snug">Une ville française interdit les smartphones partout</h3>
+            </div>
+          </a>
+
+          <a href="articles/lune-verte.html" class="block bg-white rounded-xl overflow-hidden shadow-lg article-card transition duration-300">
+            <img src="assets/images/lune-verte.png" alt="Lune verte" class="w-full h-36 md:h-44 object-cover" loading="lazy" decoding="async">
+            <div class="p-6">
+              <span class="text-[13px] md:text-sm text-red-600 font-medium">Sciences</span>
+              <h3 class="text-xl md:text-2xl font-bold mt-2 mb-2 text-gray-800 leading-snug">La Lune deviendrait verte en 2026</h3>
+            </div>
+          </a>
+        </div>
       </section>
 
-      <!-- Articles secondaires -->
-      <section class="grid">
-        <article class="card annot" data-annotation="Chiffres trop parfaits">
-          <a href="articles/ville-smartphone.html">
-            <img src="assets/images/ville-sans-smartphone.png" alt="Panneau d’interdiction de smartphone sur une place de ville" />
-            <h2>Une ville française interdit les smartphones partout</h2>
+      <!-- Dernières actus -->
+      <section>
+        <h2 class="text-4xl font-bold mb-10 text-gray-800 border-b pb-3">Dernières actualités</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          <a href="articles/ia-catastrophe.html" class="block bg-white rounded-xl overflow-hidden shadow-lg article-card transition duration-300">
+            <img src="assets/images/ia-catastrophe.png" alt="IA catastrophe" class="w-full h-36 md:h-44 object-cover" loading="lazy" decoding="async">
+            <div class="p-6">
+              <span class="text-[13px] md:text-sm text-yellow-600 font-medium">Tech</span>
+              <h3 class="text-xl md:text-2xl font-bold mt-2 mb-2 text-gray-800 leading-snug">Une IA aurait prédit la prochaine catastrophe mondiale</h3>
+            </div>
           </a>
-          <p>Le maire affirme que <strong>100 %</strong> des habitants approuvent.
-            <a href="#" class="source-link" data-dead-source>Étude PDF</a>
-          </p>
-          <div class="flag">⚠️ Étude introuvable, chiffres douteux</div>
-        </article>
 
-        <article class="card annot" data-annotation="Conditionnel flou">
-          <a href="articles/ia-catastrophe.html">
-            <img src="assets/images/ia-catastrophe.png" alt="Silhouette devant un écran rempli de code et graphiques rouges" />
-            <h2>Une IA aurait prédit la prochaine catastrophe mondiale</h2>
+          <a href="articles/coulisses-hyperbrainz.html" class="block bg-white rounded-xl overflow-hidden shadow-lg article-card transition duration-300">
+            <img src="assets/images/coulisses-hyperbrainz.png" alt="Coulisses HyperBrainZ" class="w-full h-36 md:h-44 object-cover" loading="lazy" decoding="async">
+            <div class="p-6">
+              <span class="text-[13px] md:text-sm text-blue-600 font-medium">Enquête</span>
+              <h3 class="text-xl md:text-2xl font-bold mt-2 mb-2 text-gray-800 leading-snug">Les coulisses de la boisson HyperBrainZ</h3>
+            </div>
           </a>
-          <p>Des experts anonymes parlent d'une « précision absolue ».
-            <a href="#" class="source-link" data-dead-source>Rapport exclusif</a>
-          </p>
-          <div class="flag">⚠️ Source invérifiable</div>
-        </article>
 
-        <!-- Article réservé aux abonnés -->
-        <article class="card abonnes">
-          <a href="articles/coulisses-hyperbrainz.html">
-            <img src="assets/images/coulisses-hyperbrainz.png" alt="Laboratoire avec flacons fluorescents" />
-            <h2>Les coulisses de la boisson HyperBrainZ</h2>
+          <a href="articles/vaccination.html" class="block bg-white rounded-xl overflow-hidden shadow-lg article-card transition duration-300">
+            <img src="assets/images/vaccination-fake.png" alt="Vaccination fake" class="w-full h-36 md:h-44 object-cover" loading="lazy" decoding="async">
+            <div class="p-6">
+              <span class="text-[13px] md:text-sm text-green-600 font-medium">Santé</span>
+              <h3 class="text-xl md:text-2xl font-bold mt-2 mb-2 text-gray-800 leading-snug">Vacc1nation : une découverte renvErse le débat</h3>
+            </div>
           </a>
-          <p>Découvrez pourquoi certains chercheurs mettent en garde contre cette prétendue « potion miracle »...</p>
-          <div class="paywall">
-            <p>🔒 Cet article est réservé aux abonnés</p>
-            <button class="btn subscribe">S’abonner</button>
-          </div>
-        </article>
-
-        <article class="card annot" data-annotation="URL suspecte">
-          <a href="articles/vaccination.html">
-            <img src="assets/images/vaccination-fake.png" alt="Seringue et vaccin posés sur un clavier d’ordinateur" />
-            <h2>Vacc1nation : une découverte renvErse le débat</h2>
-          </a>
-          <p>L'Observatoire Europé1n confirme : tous les doutes s'effondrent.
-            <a href="#" class="source-link" data-dead-source>observatoire-europ1en.info</a>
-          </p>
-          <div class="flag">⚠️ URL imitant un vrai média</div>
-        </article>
-      </section>
-
-      <!-- Lune verte -->
-      <section class="grid">
-        <article class="card annot" data-annotation="Photo retouchée, source NASA non vérifiable">
-          <a href="articles/lune-verte.html">
-            <img src="assets/images/lune-verte.png" alt="Photo de la Lune modifiée en vert" />
-            <h2>La Lune deviendrait verte en 2026 selon une fuite</h2>
-          </a>
-          <p>Une « fuite » interne annoncerait un changement de couleur spectaculaire de la Lune.
-            <a href="#" class="source-link" data-dead-source>Source interne</a>
-          </p>
-          <div class="flag">⚠️ Photo retouchée, autorité usurpée</div>
-        </article>
+        </div>
       </section>
 
       <!-- Notice pédagogique -->
-      <section class="notice">
-        <strong>But pédagogique :</strong> Ce site imite un vrai journal mais contient uniquement de fausses informations.
-        Utilisez <em>Révéler les indices</em> pour voir les drapeaux d’alerte et testez le <em>Quiz</em>.
+      <section class="notice bg-yellow-50 border border-yellow-200 text-yellow-800 p-4 rounded hidden">
+        ⚠️ <strong>But pédagogique :</strong> Ce site imite un vrai journal mais contient uniquement de fausses informations.
       </section>
 
-      <!-- Boutons d'interaction -->
-      <div class="actions">
-        <button id="revealBtn" class="btn primary">Révéler les indices 🔎</button>
-
-      </div>
-
-      <!-- Quiz -->
-      <section class="quiz" id="quiz" hidden>
-        <h2>🧠 Quiz Vrai/Faux</h2>
+      <!-- Mini quiz in-page -->
+      <section id="quiz" class="quiz bg-white rounded-lg shadow-md p-6 hidden">
+        <h2 class="text-2xl font-bold mb-4">🧠 Quiz Vrai/Faux</h2>
         <p>Score : <span id="score">0</span>/2</p>
 
-        <div class="q-card" data-answer="f">
+        <div class="q-card mb-4" data-answer="f">
           <strong>Un lien “Voir la source” suffit à prouver la fiabilité d’un article.</strong>
-          <div class="choices">
-            <button class="chip" data-choice="v">Vrai</button>
-            <button class="chip" data-choice="f">Faux</button>
+          <div class="choices mt-2 space-x-2">
+            <button class="chip bg-gray-200 px-3 py-1 rounded" data-choice="v">Vrai</button>
+            <button class="chip bg-gray-200 px-3 py-1 rounded" data-choice="f">Faux</button>
           </div>
-          <div class="explain" hidden>Un lien peut être mort ou secondaire.</div>
+          <div class="explain text-sm text-gray-600 mt-2 hidden">Un lien peut être mort ou secondaire.</div>
         </div>
 
-        <div class="q-card" data-answer="v">
+        <div class="q-card mb-4" data-answer="v">
           <strong>Une URL qui imite un média connu est suspecte.</strong>
-          <div class="choices">
-            <button class="chip" data-choice="v">Vrai</button>
-            <button class="chip" data-choice="f">Faux</button>
+          <div class="choices mt-2 space-x-2">
+            <button class="chip bg-gray-200 px-3 py-1 rounded" data-choice="v">Vrai</button>
+            <button class="chip bg-gray-200 px-3 py-1 rounded" data-choice="f">Faux</button>
           </div>
-          <div class="explain" hidden>C’est une technique classique d’usurpation.</div>
+          <div class="explain text-sm text-gray-600 mt-2 hidden">C’est une technique classique d’usurpation.</div>
         </div>
 
-        <button id="retryQuiz" class="btn">Recommencer</button>
+        <button id="retryQuiz" class="bg-blue-600 text-white px-4 py-2 rounded">Recommencer</button>
       </section>
     </div>
 
-    <!-- Colonne pub -->
-    <aside class="sidebar">
-      <div class="fake-ad" id="carAdSlot">
-        <img id="carAdImage" src="assets/images/pub-voiture-electrique.png" alt="Publicité automobile" />
-        <p id="carAdText">NovaCar E-Drive – L’avenir est déjà là ⚡</p>
+    <!-- Sidebar pub -->
+    <aside>
+      <div id="carAdSlot" class="bg-white shadow-md rounded-lg p-4 text-center">
+        <img id="carAdImage" src="assets/images/pub-voiture-electrique.png" alt="Publicité voiture" class="mx-auto mb-2">
+        <p id="carAdText" class="text-sm text-gray-600">NovaCar E-Drive – L’avenir est déjà là ⚡</p>
       </div>
     </aside>
   </main>
 
-  <!-- Footer -->
-  <footer class="site-footer">
-    <div class="container">
-      © 2025 — « Actu Sûre Express ». Prototype pédagogique Cybermois.
+  <!-- Footer complet -->
+  <footer class="bg-gray-800 text-white">
+    <div class="container mx-auto px-4 py-12">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+
+        <div>
+          <h3 class="text-xl font-bold">Actu Sûre Express</h3>
+          <p class="mt-3 text-white/80 text-sm leading-relaxed">
+            L’info rapide, claire et utile. Suivez nos dossiers et décryptages pour garder un esprit critique affûté.
+          </p>
+          <ul class="mt-4 space-y-1 text-white/80 text-sm">
+            <li><span class="font-medium">Rédaction :</span> contact@actusure.express</li>
+            <li><span class="font-medium">Téléphone :</span> +33 1 23 45 67 89</li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-lg font-semibold mb-3">Rubriques</h4>
+          <ul class="space-y-2 text-white/80">
+            <li><a href="index.html" class="hover:text-white">International</a></li>
+            <li><a href="index.html" class="hover:text-white">Politique</a></li>
+            <li><a href="index.html" class="hover:text-white">Économie</a></li>
+            <li><a href="index.html" class="hover:text-white">Sciences</a></li>
+            <li><a href="index.html" class="hover:text-white">Culture</a></li>
+            <li><a href="index.html" class="hover:text-white">Société</a></li>
+            <li><a href="index.html" class="hover:text-white">Tech</a></li>
+            <li><a href="index.html" class="hover:text-white">Enquêtes</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-lg font-semibold mb-3">À propos & Légal</h4>
+          <ul class="space-y-2 text-white/80">
+            <li><a href="index.html" class="hover:text-white">À propos</a></li>
+            <li><a href="index.html" class="hover:text-white">Contact</a></li>
+            <li><a href="#" class="hover:text-white">Mentions légales</a></li>
+            <li><a href="#" class="hover:text-white">Politique de confidentialité</a></li>
+            <li><a href="#" class="hover:text-white">Gestion des cookies</a></li>
+            <li><a href="#" class="hover:text-white">Conditions d’utilisation</a></li>
+            <li><a href="#" class="hover:text-white">Accessibilité</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-lg font-semibold mb-3">Newsletter</h4>
+          <p class="text-white/80 text-sm mb-4">Recevez nos meilleures actus et décryptages 1×/semaine.</p>
+          <form onsubmit="event.preventDefault(); alert('📰 Démo : aucun envoi réel.');" class="space-y-3">
+            <div class="flex overflow-hidden rounded-lg bg-white">
+              <input type="email" required placeholder="Votre e-mail" class="w-full px-4 py-2 text-gray-800 outline-none" aria-label="Adresse e-mail">
+              <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium">S’abonner</button>
+            </div>
+            <p class="text-xs text-white/60">En vous inscrivant, vous acceptez nos <a href="#" class="underline hover:text-white">conditions</a>.</p>
+          </form>
+
+          <div class="mt-6 flex items-center gap-4">
+            <a href="#" aria-label="Twitter" class="hover:text-blue-400"><i data-feather="twitter"></i></a>
+            <a href="#" aria-label="Facebook" class="hover:text-blue-300"><i data-feather="facebook"></i></a>
+            <a href="#" aria-label="Instagram" class="hover:text-pink-300"><i data-feather="instagram"></i></a>
+            <a href="#" aria-label="YouTube" class="hover:text-red-400"><i data-feather="youtube"></i></a>
+            <a href="#" aria-label="RSS" class="hover:text-amber-300"><i data-feather="rss"></i></a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="border-t border-white/10">
+      <div class="container mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-between gap-3 text-sm text-white/80">
+        <p>© 2025 — Actu Sûre Express. Tous droits réservés.</p>
+        <div class="flex items-center gap-4">
+          <a href="#" class="hover:text-white">Plan du site</a>
+          <a href="#" class="hover:text-white">Publicité</a>
+          <a href="#" class="hover:text-white">Presse</a>
+        </div>
+        <div class="flex items-center gap-3">
+          <a href="#" class="hover:text-white">FR</a>
+          <span aria-hidden="true">·</span>
+          <a href="#" class="hover:text-white">EN</a>
+          <span aria-hidden="true">·</span>
+          <a href="#" class="hover:text-white">ES</a>
+          <button onclick="window.scrollTo({top:0, behavior:'smooth'})"
+                  class="ml-4 inline-flex items-center gap-2 px-3 py-1 rounded bg-white/10 hover:bg-white/20">
+            <i data-feather="arrow-up"></i><span>Haut de page</span>
+          </button>
+        </div>
+      </div>
     </div>
   </footer>
 
-  <script src="script.js"></script>
+  <!-- JS : overlay + badges + notices + pub + popup + quiz -->
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    /* ----- Barre flottante : masquée par défaut + mémoire ----- */
+    const eduActions = document.getElementById('eduActions');
+    const eduMiniToggle = document.getElementById('eduMiniToggle');
+    const EDU_KEY = 'eduActionsVisible';
+
+    function setEduVisible(v) {
+      if (!eduActions) return;
+      eduActions.classList.toggle('hidden', !v);
+      try { localStorage.setItem(EDU_KEY, v ? '1' : '0'); } catch {}
+    }
+
+    if (eduActions && eduMiniToggle) {
+      const saved = (typeof localStorage !== 'undefined') ? localStorage.getItem(EDU_KEY) : null;
+      setEduVisible(saved === '1'); // masqué par défaut si aucune préférence
+      eduMiniToggle.addEventListener('click', () => {
+        const willShow = eduActions.classList.contains('hidden');
+        setEduVisible(willShow);
+      });
+    }
+
+    /* ----- Overlay “Outil d’analyse” ----- */
+    const quizBtn = document.getElementById('quizBtn');
+    const eduOverlay = document.getElementById('eduOverlay');
+    const eduOverlayClose = document.getElementById('eduOverlayClose');
+
+    quizBtn?.addEventListener('click', () => eduOverlay?.classList.remove('hidden'));
+    eduOverlayClose?.addEventListener('click', () => eduOverlay?.classList.add('hidden'));
+    eduOverlay?.addEventListener('click', (e) => { if (e.target === eduOverlay) eduOverlay.classList.add('hidden'); });
+
+    /* ----- Révéler les indices (badges sur les cartes) ----- */
+    const revealBtn = document.getElementById('revealBtn');
+    let revealed = false;
+    function getArticleCards() { return Array.from(document.querySelectorAll('.article-card')); }
+    const flagsByIndex = ['Titre choc','Source floue','Image manipulée','Vocabulaire biaisé'];
+
+    function addFlags() {
+      getArticleCards().forEach((card, i) => {
+        if (card.querySelector('.flag-badge')) return;
+        const badge = document.createElement('div');
+        badge.className = 'flag-badge absolute top-2 right-2 text-[11px] px-2 py-1 rounded-full bg-amber-500 text-white shadow ring-1 ring-amber-300/60';
+        badge.textContent = flagsByIndex[i % flagsByIndex.length] || 'Indice';
+        card.classList.add('relative');
+        card.appendChild(badge);
+      });
+    }
+    function removeFlags() { document.querySelectorAll('.flag-badge').forEach(b => b.remove()); }
+
+    revealBtn?.addEventListener('click', () => {
+      revealed = !revealed;
+      if (revealed) { addFlags(); revealBtn.textContent = 'Masquer les indices'; }
+      else { removeFlags(); revealBtn.textContent = 'Révéler les indices 🔎'; }
+    });
+
+    /* ----- Afficher/Masquer les notices ----- */
+    const toggleNoticeBtn = document.getElementById('toggleNoticeBtn');
+    let noticesVisible = false;
+    function updateNotices() {
+      document.querySelectorAll('.notice').forEach(n => n.classList.toggle('hidden', !noticesVisible));
+      toggleNoticeBtn.textContent = noticesVisible ? 'Cacher bandeaux' : 'Afficher bandeaux';
+    }
+    toggleNoticeBtn?.addEventListener('click', () => { noticesVisible = !noticesVisible; updateNotices(); });
+    updateNotices();
+
+    /* ----- Mini quiz in-page ----- */
+    const quiz = document.getElementById("quiz");
+    const scoreEl = document.getElementById("score");
+    let score = 0;
+
+    document.getElementById("retryQuiz")?.addEventListener("click", () => {
+      score = 0; if (scoreEl) scoreEl.textContent = "0";
+      document.querySelectorAll(".chip").forEach(ch => ch.classList.remove("correct","wrong"));
+      document.querySelectorAll(".explain").forEach(ex => ex.classList.add("hidden"));
+      document.querySelectorAll(".q-card").forEach(card => { card.dataset.answered = ""; });
+    });
+
+    document.querySelectorAll(".q-card").forEach(card => {
+      const ans = card.dataset.answer;
+      card.querySelectorAll(".chip").forEach(chip => {
+        chip.addEventListener("click", () => {
+          if (card.dataset.answered) return;
+          const choice = chip.dataset.choice;
+          const correct = choice === ans;
+          chip.classList.add(correct ? "correct" : "wrong");
+          if (!correct) {
+            card.querySelector(`.chip[data-choice="${ans}"]`)?.classList.add("correct");
+          } else {
+            score++; if (scoreEl) scoreEl.textContent = String(score);
+          }
+          card.dataset.answered = "1";
+          card.querySelector(".explain").classList.remove("hidden");
+        });
+      });
+    });
+
+    /* ----- Pagination quiz (overlay) ----- */
+    const quizPrev = document.getElementById('quizPrev');
+    const quizNext = document.getElementById('quizNext');
+    const quizStep = document.getElementById('quizStep');
+    const quizPages = [ document.getElementById('eduQuizPage1'), document.getElementById('eduQuizPage2') ];
+    let quizPage = 0;
+    function showQuizPage(idx) {
+      quizPages.forEach((el, i) => el.classList.toggle('hidden', i !== idx));
+      quizStep.textContent = `Page ${idx + 1}/2`;
+      quizPrev.disabled = (idx === 0);
+      quizNext.disabled = (idx === quizPages.length - 1);
+      const scroller = quizPages[idx]; if (scroller) scroller.scrollTop = 0;
+    }
+    quizPrev?.addEventListener('click', () => { quizPage = Math.max(0, quizPage - 1); showQuizPage(quizPage); });
+    quizNext?.addEventListener('click', () => { quizPage = Math.min(quizPages.length - 1, quizPage + 1); showQuizPage(quizPage); });
+    showQuizPage(quizPage);
+
+    /* ----- Score overlay ----- */
+    const eduScoreEl = document.getElementById('eduScore');
+    const eduTotalEl = document.getElementById('eduTotal');
+    const eduQuizReset = document.getElementById('eduQuizReset');
+    const eduQuizQuestions = document.getElementById('eduQuizQuestions');
+    let eduScore = 0;
+    function updateTotal() {
+      const total = document.querySelectorAll('#eduQuizQuestions .quiz-item').length;
+      if (eduTotalEl) eduTotalEl.textContent = total;
+    }
+    updateTotal();
+
+    eduQuizQuestions?.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-q]');
+      if (!btn) return;
+      const q = btn.dataset.q;
+      const isCorrect = btn.dataset.a === 'true';
+      const wrap = btn.parentElement;
+      wrap.querySelectorAll('button').forEach(b => b.disabled = true);
+      btn.classList.add(isCorrect ? 'bg-green-200' : 'bg-red-200');
+      const exp = wrap.parentElement.querySelector(`[data-exp="${q}"]`);
+      if (exp) exp.classList.remove('hidden');
+      if (isCorrect) { eduScore++; eduScoreEl.textContent = String(eduScore); }
+    });
+
+    document.getElementById('closeOverlayFromQuiz')?.addEventListener('click', () => eduOverlay?.classList.add('hidden'));
+    eduQuizReset?.addEventListener('click', () => {
+      eduScore = 0; eduScoreEl.textContent = '0';
+      document.querySelectorAll('#eduQuizQuestions button').forEach(b => { b.disabled = false; b.classList.remove('bg-green-200','bg-red-200'); });
+      document.querySelectorAll('#eduQuizQuestions [data-exp]').forEach(p => p.classList.add('hidden'));
+      quizPage = 0; showQuizPage(quizPage);
+    });
+    quizBtn?.addEventListener('click', () => { updateTotal(); showQuizPage(quizPage); });
+
+    /* ----- Popup abonnement factice ----- */
+    const fakePopup = document.getElementById("fakePopup");
+    const closePopup = document.getElementById("closePopup");
+    setTimeout(() => { if (fakePopup) fakePopup.classList.remove("hidden"); }, 10000);
+    closePopup?.addEventListener("click", () => fakePopup.classList.add("hidden"));
+    fakePopup?.querySelector("form")?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      alert("⚠️ Attention : ceci est un faux formulaire, ne saisissez jamais de données réelles !");
+      fakePopup.classList.add("hidden");
+    });
+
+    /* ----- Rotation PUB ----- */
+    const adImage = document.getElementById("carAdImage");
+    const adText  = document.getElementById("carAdText");
+    if (adImage && adText) {
+      const base = "assets/images/";
+      const ads = [
+        { img: base + "pub-voiture-electrique.png", text: "NovaCar E-Drive – L’avenir est déjà là ⚡" },
+        { img: base + "pub-suv-familial.png",       text: "RoadMaster X – L’espace et la sécurité 🚙" },
+        { img: base + "pub-burger-xxl.png",         text: "MegaBurger XXL – Plus grand, plus juteux 🍔" },
+        { img: base + "pub-montre-connectee.png",   text: "TimeX Pro – La montre connectée du futur ⏱️" }
+      ];
+      let current = Math.floor(Math.random() * ads.length);
+      function applyAd(i) {
+        adImage.classList.add("fade-out");
+        setTimeout(() => {
+          adImage.src = ads[i].img;
+          adText.textContent = ads[i].text;
+          adImage.classList.remove("fade-out");
+          adImage.classList.add("fade-in");
+          setTimeout(() => adImage.classList.remove("fade-in"), 700);
+        }, 300);
+      }
+      adImage.src = ads[current].img; adText.textContent = ads[current].text;
+      setInterval(() => { current = (current + 1) % ads.length; applyAd(current); }, 10000);
+    }
+
+    /* ----- Feather + AOS ----- */
+    if (window.feather) feather.replace();
+    if (window.AOS) AOS.init();
+  });
+  </script>
 </body>
 </html>
-
