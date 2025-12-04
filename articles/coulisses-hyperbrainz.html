@@ -1,34 +1,154 @@
-<!-- Article -->
-<div class="lg:col-span-2">
-  <article class="bg-white rounded-lg shadow-md p-6 space-y-4">
-    <img src="../assets/images/hyperbrainz-boisson.png" alt="Boisson HyperBrainZ" class="rounded mb-6">
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>HyperBrainZ : la boisson miracle ?</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Roboto', sans-serif; background-color: #f8f9fa; }
+    h1, h2, h3 { font-family: 'Playfair Display', serif; }
+    .navbar { backdrop-filter: blur(10px); }
+    .breaking-news { background: #dc2626; color: white; overflow: hidden; position: relative; }
+    .ticker { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 25s linear infinite; }
+    .ticker span { margin: 0 2rem; }
+    @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-    <h2 class="text-2xl font-bold mb-4">Les coulisses d’HyperBrainZ : enquête sur la boisson qui promet l’intelligence</h2>
+    #toggleNoticeBtn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #fbbf24;
+      color: #000;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      opacity: 0.6;
+      transition: opacity 0.3s;
+      z-index: 50;
+    }
+    #toggleNoticeBtn:hover { opacity: 1; }
+    .notice { display: none; }
+  </style>
+</head>
 
-    <p>Dans un précédent article, nous évoquions l’annonce tonitruante affirmant qu’<em>HyperBrainZ™</em> pourrait augmenter le QI des adolescents de 300 %. Malgré cette promesse digne d’un film de science-fiction, beaucoup de zones d’ombre demeurent. Retour sur l’envers du décor d’une boisson qui attire autant qu’elle inquiète.</p>
+<body class="bg-gray-50">
 
-    <h3 class="text-xl font-semibold mt-6">Une start-up brillante… surtout en communication</h3>
-    <p>HyperBrainZ est commercialisée par <strong>NeuroBoost Corp</strong>, une jeune entreprise suisse présentée comme « pionnière des neurosciences appliquées ». Si la marque revendique dix années de recherche approfondie, aucune publication scientifique vérifiable n’a été retrouvée dans les bases de données académiques.</p>
-    <p>Sur leur site, le nom d’un mystérieux neurologue fondateur est mentionné, mais aucune trace n’existe dans les revues spécialisées. Les seules preuves mises en avant sont des images colorées simulant des IRM et des graphiques impossibles à interpréter.</p>
-
-    <h3 class="text-xl font-semibold mt-6">Des ingrédients « neuroactifs »… ou juste très sucrés ?</h3>
-    <p>La boisson vante la présence de <strong>« nano-molécules neuroactives »</strong>, un terme inexistant dans la littérature scientifique. Interrogée, l’entreprise évoque un « secret industriel ». Une analyse indépendante révèle cependant un mélange principalement constitué de <strong>caféine, taurine, sucre et arômes artificiels</strong>, proche des boissons énergisantes classiques.</p>
-    <p>Rien ne démontre l’existence d’une substance capable de multiplier l’intelligence humaine.</p>
-
-    <h3 class="text-xl font-semibold mt-6">Une communication virale, calibrée pour les jeunes</h3>
-    <p>Si la science peine à répondre, la stratégie marketing, elle, fonctionne à merveille. La marque sponsorise massivement des créateurs sur TikTok et Instagram. Le défi <strong>#HyperBrainZChallenge</strong>, consistant à boire une canette avant un contrôle, dépasse les 30 millions de vues.</p>
-    <p>Capsules dynamiques, musique électrisante, promesse de « réviser deux fois plus vite » : tout est conçu pour séduire un public adolescent en quête de performance.</p>
-
-    <h3 class="text-xl font-semibold mt-6">Les scientifiques appellent à la prudence</h3>
-    <p>« Les résultats annoncés sont scientifiquement absurdes », estime le Pr. <strong>Élise Morel</strong>, neuropsychologue à Lyon. Aucun test en double-aveugle, aucune méthodologie claire, aucun groupe témoin. Rien ne permet de confirmer les performances cognitives promises.</p>
-    <p>L’<strong>EFSA</strong> rappelle que des taux élevés de caféine peuvent provoquer <em>palpitations, anxiété et troubles du sommeil</em>, particulièrement chez les mineurs. Une boisson présentée comme miracle pourrait donc cacher des risques bien réels.</p>
-
-    <h3 class="text-xl font-semibold mt-6">Révolution intellectuelle ou simple coup marketing ?</h3>
-    <p>HyperBrainZ n’a peut-être pas encore prouvé qu’elle développe l’intelligence, mais elle dynamise incontestablement les ventes. En jouant sur le rêve de performance immédiate, la marque exploite les codes de la viralité et de la pseudo-science pour convaincre plutôt qu’informer.</p>
-    <p>Au-delà du phénomène, une question persiste : <strong>cherchons-nous à booster les neurones… ou simplement à booster le marché ?</strong></p>
-
-    <div class="notice bg-yellow-50 border border-yellow-200 text-yellow-800 p-4 rounded">
-      ⚠️ <strong>Notice pédagogique :</strong> Cet article est fictif. Il sert d’exercice de sensibilisation aux mécanismes de désinformation et à l’analyse critique des sources.
+  <!-- Navbar -->
+  <nav class="navbar fixed w-full bg-white bg-opacity-90 shadow-sm z-50">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <a href="../index.html" class="text-2xl font-bold text-blue-800">Actu Sûre Express</a>
+      <div class="hidden md:flex space-x-6">
+        <a href="../index.html" class="text-gray-700 hover:text-blue-600">International</a>
+        <a href="../index.html" class="text-gray-700 hover:text-blue-600">Politique</a>
+        <a href="../index.html" class="text-gray-700 hover:text-blue-600">Économie</a>
+        <a href="../index.html" class="text-gray-700 hover:text-blue-600">Sciences</a>
+        <a href="../index.html" class="text-gray-700 hover:text-blue-600">Culture</a>
+      </div>
+      <button class="md:hidden focus:outline-none" id="menu-toggle"><i data-feather="menu"></i></button>
     </div>
-  </article>
-</div>
+    <div class="md:hidden hidden bg-white w-full py-2 px-4 shadow-md" id="mobile-menu">
+      <a href="../index.html" class="block py-2 text-gray-700 hover:text-blue-600">International</a>
+      <a href="../index.html" class="block py-2 text-gray-700 hover:text-blue-600">Politique</a>
+      <a href="../index.html" class="block py-2 text-gray-700 hover:text-blue-600">Économie</a>
+      <a href="../index.html" class="block py-2 text-gray-700 hover:text-blue-600">Sciences</a>
+      <a href="../index.html" class="block py-2 text-gray-700 hover:text-blue-600">Culture</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="pt-24 pb-8 bg-gradient-to-r from-blue-800 to-blue-600 text-white text-center">
+    <h1 class="text-4xl md:text-5xl font-bold mb-2">HyperBrainZ : la boisson miracle ?</h1>
+    <p class="text-gray-200">Publié le 12 octobre 2026 — Par Dr. J. Vérité</p>
+
+    <div class="max-w-2xl mx-auto relative mt-6">
+      <input type="text" placeholder="Rechercher des articles..." class="w-full py-3 px-6 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <button class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-700 text-white p-2 rounded-full hover:bg-blue-800">
+        <i data-feather="search"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Breaking news -->
+  <div class="breaking-news">
+    <div class="ticker">
+      <span>⚡ URGENT : Une pluie de spaghettis annoncée dans le sud de la France</span>
+      <span>🛸 Insolite : Des moutons alignés en cercle intriguent les astronomes</span>
+      <span>🌋 Monde : Un volcan aurait chanté du Céline Dion avant d’entrer en éruption</span>
+      <span>🐙 Océan : Une pieuvre géante aperçue en train de jongler avec des bouées</span>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <main class="container mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+    <!-- ARTICLE mis à jour -->
+    <div class="lg:col-span-2">
+      <article class="bg-white rounded-lg shadow-md p-6 space-y-4">
+        <img src="../assets/images/hyperbrainz-boisson.png" alt="Boisson HyperBrainZ" class="rounded mb-6">
+
+        <h2 class="text-2xl font-bold mb-4">Les coulisses d’HyperBrainZ : enquête sur la boisson qui promet l’intelligence</h2>
+
+        <p>Après l’annonce spectaculaire affirmant qu’une canette d’<strong>HyperBrainZ™</strong> pourrait tripler le QI des adolescents, nous avons voulu comprendre ce qui se cache derrière ce produit présenté comme révolutionnaire. Entre marketing agressif, science floue et influence massive sur les réseaux, l’envers du décor mérite un examen attentif.</p>
+
+        <h3 class="text-xl font-semibold mt-6">Un institut de recherche introuvable</h3>
+        <p>L’étude citée comme « exclusive » serait fondée par l’<strong>Institut Global des Neurosciences Appliquées™</strong>, basé à Genève. Pourtant, aucune publication officielle, ni équipe identifiable n’apparaît dans les bases de données scientifiques. Seule certitude : l’organisme est financé par <em>NeuroBoost Corp</em>, l’entreprise qui commercialise la boisson.</p>
+
+        <h3 class="text-xl font-semibold mt-6">Des « nano-molécules neuroactives » mystérieuses</h3>
+        <p>La marque met en avant des ingrédients innovants aux noms futuristes, sans jamais dévoiler leur nature exacte. Les analyses indépendantes font état d’un mélange proche des boissons énergisantes classiques, composé de <strong>caféine, sucre, taurine</strong> et arômes artificiels.</p>
+        <p>Aucune trace d’une substance capable d’amplifier le raisonnement humain.</p>
+
+        <h3 class="text-xl font-semibold mt-6">Une stratégie marketing redoutablement efficace</h3>
+        <p>Sur TikTok, le <strong>#HyperBrainZChallenge</strong> explose : plus de 30 millions de vues. Des influenceurs se filment en train de réviser en « mode turbo » après avoir bu la boisson. Graphiques pseudo-scientifiques, animations de neurones lumineux, discours pseudo-technique : tout est fait pour donner l’illusion du sérieux.</p>
+
+        <h3 class="text-xl font-semibold mt-6">La communauté scientifique sceptique</h3>
+        <p>« Une hausse de 300 % du QI n’a aucun sens scientifique », rappelle le Pr. <strong>Élise Morel</strong>, neuropsychologue. L’<strong>EFSA</strong> appelle à la vigilance, soulignant que l’excès de caféine peut provoquer nervosité, insomnies et palpitations, particulièrement chez les adolescents.</p>
+
+        <h3 class="text-xl font-semibold mt-6">Boisson miracle ou mirage marketing ?</h3>
+        <p>HyperBrainZ promet de « réveiller vos neurones », mais semble surtout réveiller le marché. Une success-story commerciale plus qu’une révolution scientifique.</p>
+        <p><strong>Plus qu’une question d’intelligence, HyperBrainZ interroge notre rapport à la performance et à l’information.</strong></p>
+
+        <div class="notice bg-yellow-50 border border-yellow-200 text-yellow-800 p-4 rounded">
+          ⚠️ <strong>Message pédagogique :</strong> Cet article est fictif. Il sert d’exercice de sensibilisation aux fake news et à l’analyse critique des sources.
+        </div>
+      </article>
+    </div>
+
+    <!-- Sidebar -->
+    <aside>
+      <div class="bg-white shadow-md rounded-lg p-4">
+        <h3 class="font-bold text-gray-800 mb-2">Publicité</h3>
+        <img src="../assets/images/pub-voiture-electrique.png" alt="Pub voiture électrique" class="rounded-lg mb-6">
+        <p class="text-sm text-gray-600">NovaCar E-Drive – L’avenir est déjà là ⚡</p>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-8">
+    <div class="container mx-auto text-center">
+      © 2025 — Actu Sûre Express. Prototype pédagogique Cybermois.
+    </div>
+  </footer>
+
+  <button id="toggleNoticeBtn">ℹ️</button>
+
+  <script>
+    document.getElementById('menu-toggle').addEventListener('click', function() {
+      document.getElementById('mobile-menu').classList.toggle('hidden');
+    });
+    feather.replace();
+    AOS.init();
+
+    const notice = document.querySelector('.notice');
+    const toggleBtn = document.getElementById('toggleNoticeBtn');
+    toggleBtn.addEventListener('click', () => {
+      notice.style.display = (notice.style.display === 'none' || notice.style.display === '') ? 'block' : 'none';
+    });
+  </script>
+
+</body>
+</html>
